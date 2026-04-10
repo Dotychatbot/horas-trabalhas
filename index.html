@@ -3,256 +3,136 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Controle de Horas</title>
-
+  <title>Controle de Horas Pro</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #030712;
-      color: #f9fafb;
-      min-height: 100vh;
-      padding-bottom: 90px;
-    }
-    /* ── Header ── */
-    #header {
-      background: #030712;
-      border-bottom: 1px solid #111827;
-      padding: 16px 20px 12px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-    #header-inner {
-      max-width: 500px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .header-label { font-size: 10px; letter-spacing: 3px; color: #10b981; font-weight: 800; text-transform: uppercase; }
-    .header-title { font-size: 19px; font-weight: 900; letter-spacing: -0.5px; }
-    #user-area { display: flex; gap: 8px; align-items: center; }
-    #ponto-badge {
-      font-size: 11px; color: #10b981; font-weight: 700;
-      background: #022c22; border: 1px solid #10b981;
-      border-radius: 8px; padding: 4px 10px; display: none;
-    }
-    #user-photo { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #10b981; cursor: pointer; display: none; }
-    #btn-config {
-      background: #111827; border: 1px solid #1f2937; color: #9ca3af;
-      border-radius: 10px; padding: 7px 11px; cursor: pointer; font-size: 13px;
-    }
-    /* ── Main container ── */
-    #main { max-width: 500px; margin: 0 auto; padding: 0 16px; }
-    /* ── Login ── */
-    #login-screen {
-      min-height: 100vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; padding: 24px; text-align: center;
-    }
-    #login-screen .icon { font-size: 52px; margin-bottom: 16px; }
-    #login-screen .sub { font-size: 10px; letter-spacing: 3px; color: #10b981; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
-    #login-screen h1 { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 8px; }
-    #login-screen p { font-size: 14px; color: #6b7280; margin-bottom: 48px; }
-    #btn-google {
-      background: #fff; border: none; border-radius: 14px;
-      color: #111; font-weight: 800; font-size: 15px;
-      padding: 16px 32px; cursor: pointer;
-      display: flex; align-items: center; gap: 12px; font-family: inherit;
-    }
-    /* ── Meses ── */
-    #meses-bar {
-      display: flex; gap: 8px; margin: 14px 0 12px;
-      overflow-x: auto; padding-bottom: 4px;
-    }
-    .mes-btn {
-      background: #111827; border: 1px solid #1f2937;
-      border-radius: 10px; color: #6b7280; padding: 7px 14px;
-      cursor: pointer; white-space: nowrap; font-size: 12px;
-      font-weight: 700; font-family: inherit; flex-shrink: 0;
-    }
-    .mes-btn.ativo { background: #10b981; border-color: #10b981; color: #fff; }
-    /* ── Resumo ── */
-    #resumo {
-      background: #0a1628; border: 1px solid #10b98120;
-      border-radius: 20px; padding: 18px; margin-bottom: 14px;
-    }
-    #resumo-titulo { font-size: 12px; color: #10b981; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
-    #resumo-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    .res-card { background: #030712; border-radius: 12px; padding: 11px 13px; border: 1px solid #111827; }
-    .res-card .ico { font-size: 16px; }
-    .res-card .val { font-size: 21px; font-weight: 900; margin-top: 3px; }
-    .res-card .lbl { font-size: 11px; color: #6b7280; margin-top: 2px; }
-    #resumo-financeiro { border-top: 1px solid #1f2937; padding-top: 12px; }
-    .fin-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-    .fin-row span:first-child { color: #6b7280; font-size: 13px; }
-    .fin-row span:last-child { font-weight: 700; }
-    #total-box {
-      display: flex; justify-content: space-between; align-items: center;
-      background: #022c22; border-radius: 12px; padding: 12px 14px; margin-top: 6px;
-    }
-    #total-box span:first-child { color: #10b981; font-weight: 800; font-size: 14px; }
-    #total-box span:last-child { color: #10b981; font-weight: 900; font-size: 17px; }
-    #resumo-acoes { display: flex; gap: 8px; margin-top: 10px; }
-    .btn-acao {
-      flex: 1; background: #1f2937; border: 1px solid #374151;
-      color: #fff; border-radius: 12px; padding: 11px;
-      cursor: pointer; font-size: 12px; font-weight: 800; font-family: inherit;
-    }
-    /* ── Tabs ── */
-    #tabs {
-      display: flex; background: #111827; border-radius: 12px;
-      padding: 4px; margin-bottom: 14px; border: 1px solid #1f2937;
-    }
-    .tab-btn {
-      flex: 1; padding: 9px 2px; border-radius: 9px; border: none;
-      cursor: pointer; font-weight: 700; font-size: 11px; font-family: inherit;
-      background: transparent; color: #6b7280; transition: all 0.2s;
-    }
-    .tab-btn.ativo { background: #10b981; color: #fff; }
-    /* ── Tab content ── */
-    .tab-content { display: none; }
-    .tab-content.ativo { display: block; }
-    /* ── Ponto ── */
-    #relogio-card {
-      background: #111827; border: 1px solid #1f2937;
-      border-radius: 16px; padding: 28px 20px; text-align: center; margin-bottom: 12px;
-    }
-    #relogio { font-size: 46px; font-weight: 900; letter-spacing: -2px; }
-    #data-atual { font-size: 13px; color: #6b7280; margin-top: 4px; }
-    #ponto-info {
-      margin-top: 14px; background: #022c22; border: 1px solid #10b981;
-      border-radius: 12px; padding: 10px 16px; display: none;
-    }
-    #ponto-info p:first-child { font-size: 12px; color: #10b981; font-weight: 700; }
-    #ponto-info p:last-child { font-size: 12px; color: #059669; margin-top: 2px; }
-    #ponto-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .ponto-btn {
-      border: none; border-radius: 12px; color: #fff; font-weight: 800;
-      font-size: 16px; padding: 20px; cursor: pointer; font-family: inherit;
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-    }
-    .ponto-btn span.emo { font-size: 28px; }
-    /* ── Manual ── */
-    #tipo-toggle { display: flex; background: #111827; border-radius: 12px; padding: 4px; border: 1px solid #1f2937; margin-bottom: 14px; }
-    .tipo-btn {
-      flex: 1; padding: 9px 4px; border-radius: 9px; border: none;
-      cursor: pointer; font-weight: 700; font-size: 12px; font-family: inherit;
-      background: transparent; color: #6b7280;
-    }
-    .tipo-btn.ativo { background: #1f2937; color: #10b981; }
-    .campo { margin-bottom: 14px; }
-    .campo label { display: block; font-size: 11px; color: #6b7280; margin-bottom: 6px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-    .campo input {
-      width: 100%; background: #111827; border: 1px solid #1f2937;
-      border-radius: 12px; color: #f9fafb; padding: 13px 14px;
-      font-size: 15px; font-family: inherit; outline: none;
-    }
-    #campos-hora { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    #preview {
-      border-radius: 12px; padding: 12px 16px;
-      display: none; justify-content: space-between; margin-bottom: 14px;
-    }
-    #preview .prev-item .lbl { font-size: 11px; color: #6b7280; }
-    #preview .prev-item .val { font-size: 20px; font-weight: 800; }
-    #btn-salvar {
-      width: 100%; background: #10b981; border: none; border-radius: 12px;
-      color: #fff; font-weight: 800; font-size: 15px; padding: 15px;
-      cursor: pointer; font-family: inherit;
-    }
-    /* ── Histórico ── */
-    .reg-card {
-      background: #111827; border: 1px solid #1f2937; border-radius: 16px;
-      padding: 13px 14px; margin-bottom: 10px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .reg-left { display: flex; gap: 12px; align-items: center; }
-    .reg-ico {
-      width: 38px; height: 38px; border-radius: 10px; font-size: 18px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .reg-titulo { font-weight: 700; font-size: 13px; }
-    .reg-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
-    .reg-right { display: flex; gap: 8px; align-items: center; }
-    .reg-valor { font-weight: 800; color: #f59e0b; font-size: 14px; }
-    .btn-del {
-      background: #1f1515; border: 1px solid #3f2020; border-radius: 8px;
-      color: #ef4444; cursor: pointer; font-size: 13px; padding: 4px 9px;
-    }
-    /* ── Gráfico ── */
-    #grafico-card {
-      background: #111827; border: 1px solid #1f2937;
-      border-radius: 16px; padding: 16px; margin-bottom: 14px;
-    }
-    #grafico-titulo { font-size: 12px; color: #10b981; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
-    #grafico-lista .g-row {
-      background: #111827; border: 1px solid #1f2937; border-radius: 12px;
-      padding: 12px 14px; margin-bottom: 8px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    #grafico-lista .g-row span:first-child { font-weight: 700; }
-    #grafico-lista .g-row span:last-child { font-weight: 800; color: #f59e0b; }
-    /* ── Modal config ── */
-    #modal-overlay {
-      position: fixed; inset: 0; background: #000000cc;
-      display: none; align-items: flex-end; justify-content: center; z-index: 100;
-    }
-    #modal-overlay.aberto { display: flex; }
-    #modal {
-      background: #111827; border-radius: 20px 20px 0 0;
-      border: 1px solid #1f2937; padding: 24px 20px 48px;
-      width: 100%; max-width: 500px;
-    }
-    #modal h2 { font-weight: 800; font-size: 17px; margin-bottom: 20px; color: #10b981; }
-    #btn-salvar-config {
-      width: 100%; background: #10b981; border: none; border-radius: 12px;
-      color: #fff; font-weight: 800; font-size: 15px; padding: 14px;
-      cursor: pointer; font-family: inherit; margin-top: 8px;
-    }
-    /* ── Toast ── */
-    #toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      border-radius: 12px; padding: 12px 22px; font-weight: 700; font-size: 13px;
-      z-index: 200; white-space: nowrap; box-shadow: 0 8px 32px #000a;
-      display: none; pointer-events: none;
-    }
-    #toast.ok { background: #022c22; border: 1px solid #10b981; color: #6ee7b7; }
-    #toast.erro { background: #2d0a0a; border: 1px solid #ef4444; color: #fca5a5; }
-    /* ── Splash ── */
-    #splash {
-      position: fixed; inset: 0; background: #030712;
-      display: flex; align-items: center; justify-content: center;
-      color: #10b981; font-size: 16px; z-index: 999;
-    }
-    /* ── Vazio ── */
-    .vazio { text-align: center; color: #374151; padding: 40px 0; font-size: 14px; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;padding-bottom:90px;}
+    #splash{position:fixed;inset:0;background:#030712;display:flex;align-items:center;justify-content:center;color:#10b981;font-size:16px;z-index:999;flex-direction:column;gap:12px;}
+    .splash-icon{font-size:40px;}
+    #login-screen{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+    #login-screen .icon{font-size:52px;margin-bottom:16px;}
+    #login-screen .sub{font-size:10px;letter-spacing:3px;color:#10b981;font-weight:800;text-transform:uppercase;margin-bottom:8px;}
+    #login-screen h1{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;}
+    #login-screen p{font-size:14px;color:#6b7280;margin-bottom:48px;}
+    #btn-google{background:#fff;border:none;border-radius:14px;color:#111;font-weight:800;font-size:15px;padding:16px 32px;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:inherit;}
+    #app{display:none;}
+    #header{background:#030712;border-bottom:1px solid #111827;padding:14px 20px 12px;position:sticky;top:0;z-index:20;}
+    #header-inner{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+    .h-label{font-size:10px;letter-spacing:3px;color:#10b981;font-weight:800;text-transform:uppercase;}
+    .h-title{font-size:18px;font-weight:900;letter-spacing:-0.5px;}
+    #header-right{display:flex;gap:8px;align-items:center;}
+    #ponto-badge{font-size:11px;color:#10b981;font-weight:700;background:#022c22;border:1px solid #10b981;border-radius:8px;padding:4px 10px;display:none;}
+    #user-photo{width:32px;height:32px;border-radius:50%;border:2px solid #10b981;cursor:pointer;display:none;}
+    .icon-btn{background:#111827;border:1px solid #1f2937;color:#9ca3af;border-radius:10px;padding:7px 11px;cursor:pointer;font-size:13px;font-family:inherit;}
+    #main{max-width:520px;margin:0 auto;padding:0 16px;}
+    #meses-bar{display:flex;gap:8px;margin:14px 0 12px;overflow-x:auto;padding-bottom:4px;}
+    .mes-btn{background:#111827;border:1px solid #1f2937;border-radius:10px;color:#6b7280;padding:7px 14px;cursor:pointer;white-space:nowrap;font-size:12px;font-weight:700;font-family:inherit;flex-shrink:0;}
+    .mes-btn.ativo{background:#10b981;border-color:#10b981;color:#fff;}
+    #resumo-geral{background:#0a1628;border:1px solid #10b98120;border-radius:20px;padding:18px;margin-bottom:14px;}
+    #resumo-titulo{font-size:12px;color:#10b981;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+    #resumo-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+    .res-card{background:#030712;border-radius:12px;padding:11px 13px;border:1px solid #111827;}
+    .res-card .ico{font-size:16px;}.res-card .val{font-size:19px;font-weight:900;margin-top:3px;}.res-card .lbl{font-size:11px;color:#6b7280;margin-top:2px;}
+    #fin-rows{border-top:1px solid #1f2937;padding-top:12px;}
+    .fin-row{display:flex;justify-content:space-between;margin-bottom:5px;}
+    .fin-row span:first-child{color:#6b7280;font-size:13px;}.fin-row span:last-child{font-weight:700;}
+    #total-box{display:flex;justify-content:space-between;align-items:center;background:#022c22;border-radius:12px;padding:12px 14px;margin-top:8px;}
+    #total-box span:first-child{color:#10b981;font-weight:800;font-size:14px;}#total-box span:last-child{color:#10b981;font-weight:900;font-size:17px;}
+    #tabs{display:flex;background:#111827;border-radius:12px;padding:4px;margin-bottom:14px;border:1px solid #1f2937;overflow-x:auto;gap:2px;}
+    .tab-btn{flex:1;padding:9px 4px;border-radius:9px;border:none;cursor:pointer;font-weight:700;font-size:11px;font-family:inherit;background:transparent;color:#6b7280;transition:all .2s;white-space:nowrap;min-width:58px;}
+    .tab-btn.ativo{background:#10b981;color:#fff;}
+    .tab-content{display:none;}.tab-content.ativo{display:block;}
+    .card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:16px;margin-bottom:12px;}
+    .campo{margin-bottom:14px;}
+    .campo label{display:block;font-size:11px;color:#6b7280;margin-bottom:6px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+    .campo input,.campo select,.campo textarea{width:100%;background:#111827;border:1px solid #1f2937;border-radius:12px;color:#f9fafb;padding:13px 14px;font-size:14px;font-family:inherit;outline:none;}
+    .campo select option{background:#111827;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .btn-green{background:#10b981;border:none;border-radius:12px;color:#fff;font-weight:800;font-size:14px;padding:13px 20px;cursor:pointer;font-family:inherit;width:100%;}
+    .btn-gray{background:#1f2937;border:1px solid #374151;border-radius:12px;color:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;font-family:inherit;}
+    .btn-red{background:#1f1515;border:1px solid #3f2020;border-radius:8px;color:#ef4444;cursor:pointer;font-size:13px;padding:4px 9px;font-family:inherit;}
+    .btn-sm{background:#1f2937;border:1px solid #374151;border-radius:8px;color:#9ca3af;cursor:pointer;font-size:12px;padding:5px 10px;font-family:inherit;}
+    .toggle{display:flex;background:#111827;border-radius:12px;padding:4px;border:1px solid #1f2937;margin-bottom:14px;}
+    .toggle-btn{flex:1;padding:9px 4px;border-radius:9px;border:none;cursor:pointer;font-weight:700;font-size:12px;font-family:inherit;background:transparent;color:#6b7280;}
+    .toggle-btn.ativo{background:#1f2937;color:#10b981;}
+    .cliente-card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:14px;margin-bottom:10px;}
+    .cliente-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+    .cliente-nome{font-weight:800;font-size:15px;margin-bottom:4px;}
+    .cliente-tipo{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;}
+    .tipo-academia{background:#1a2744;color:#60a5fa;}.tipo-aluno{background:#1a1a3a;color:#a78bfa;}
+    .cliente-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+    .stat-item{background:#030712;border-radius:10px;padding:8px;text-align:center;border:1px solid #111827;}
+    .stat-val{font-size:15px;font-weight:800;}.stat-lbl{font-size:10px;color:#6b7280;margin-top:2px;}
+    .cliente-acoes{display:flex;gap:8px;flex-wrap:wrap;}
+    .pacote-bar{background:#1f2937;border-radius:20px;height:6px;margin:8px 0;overflow:hidden;}
+    .pacote-fill{background:#10b981;height:100%;border-radius:20px;}
+    .status-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;}
+    .status-pago{background:#022c22;color:#10b981;border:1px solid #10b981 !important;}
+    .status-pendente{background:#2d1a00;color:#f59e0b;border:1px solid #f59e0b !important;}
+    .reg-card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:13px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+    .reg-left{display:flex;gap:12px;align-items:center;}
+    .reg-ico{width:36px;height:36px;border-radius:10px;font-size:17px;display:flex;align-items:center;justify-content:center;}
+    .reg-titulo{font-weight:700;font-size:13px;}.reg-sub{font-size:11px;color:#6b7280;margin-top:2px;}
+    .reg-right{display:flex;gap:8px;align-items:center;}
+    .reg-valor{font-weight:800;color:#f59e0b;font-size:14px;}
+    .acresc-item{display:flex;justify-content:space-between;align-items:center;background:#030712;border:1px solid #1f2937;border-radius:10px;padding:10px 14px;margin-bottom:8px;}
+    .acresc-desc{font-size:13px;font-weight:600;}.acresc-val{font-size:14px;font-weight:800;color:#f59e0b;}
+    #relogio-card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:28px 20px;text-align:center;margin-bottom:12px;}
+    #relogio{font-size:44px;font-weight:900;letter-spacing:-2px;}
+    #data-atual{font-size:13px;color:#6b7280;margin-top:4px;}
+    #ponto-info{margin-top:14px;background:#022c22;border:1px solid #10b981;border-radius:12px;padding:10px 16px;display:none;}
+    #ponto-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .ponto-btn{border:none;border-radius:12px;color:#fff;font-weight:800;font-size:15px;padding:20px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:6px;}
+    .ponto-btn .emo{font-size:26px;}
+    #preview{border-radius:12px;padding:12px 16px;display:none;justify-content:space-between;margin-bottom:14px;}
+    .vazio{text-align:center;color:#374151;padding:40px 0;font-size:14px;}
+    .modal-overlay{position:fixed;inset:0;background:#000000cc;display:none;align-items:flex-end;justify-content:center;z-index:100;}
+    .modal-overlay.aberto{display:flex;}
+    .modal{background:#111827;border-radius:20px 20px 0 0;border:1px solid #1f2937;padding:24px 20px 48px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+    .modal h2{font-weight:800;font-size:17px;margin-bottom:20px;color:#10b981;}
+    .modal-close{float:right;background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;}
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);border-radius:12px;padding:12px 22px;font-weight:700;font-size:13px;z-index:200;white-space:nowrap;box-shadow:0 8px 32px #000a;display:none;}
+    #toast.ok{background:#022c22;border:1px solid #10b981;color:#6ee7b7;}
+    #toast.erro{background:#2d0a0a;border:1px solid #ef4444;color:#fca5a5;}
+    .sec-title{font-size:12px;color:#10b981;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+    #recibo-page{display:none;position:fixed;inset:0;background:#e5e7eb;z-index:500;overflow-y:auto;padding:20px;}
+    #recibo-content{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.1);color:#111;}
+    .rec-section{margin-bottom:20px;}
+    .rec-section h3{font-size:12px;font-weight:800;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #10b981;}
+    .rec-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;}
+    .rec-row:last-child{border:none;}
+    .rec-total{display:flex;justify-content:space-between;background:#022c22;border-radius:10px;padding:14px 16px;margin-top:16px;}
+    .rec-total span:first-child{color:#10b981;font-weight:800;font-size:15px;}
+    .rec-total span:last-child{color:#10b981;font-weight:900;font-size:18px;}
+    .rec-status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+    .rec-status.pago{background:#d1fae5;color:#065f46;}.rec-status.pendente{background:#fef3c7;color:#92400e;}
+    #recibo-acoes{display:flex;gap:10px;margin-bottom:20px;max-width:600px;margin-left:auto;margin-right:auto;}
+    @media print{#recibo-acoes{display:none;}#recibo-page{position:static;}body{background:#fff;}}
   </style>
 </head>
 <body>
 
-<div id="splash">Carregando...</div>
-<div id="login-screen" style="display:none">
+<div id="splash"><div class="splash-icon">⏱️</div><div>Carregando...</div></div>
+
+<div id="login-screen">
   <div class="icon">⏱️</div>
-  <div class="sub">Personal Trainer</div>
+  <div class="sub">Personal Trainer Pro</div>
   <h1>Controle de Horas</h1>
-  <p>Seus dados salvos na nuvem,<br>acessíveis de qualquer dispositivo</p>
+  <p>Gerencie clientes, aulas e recibos<br>tudo na nuvem</p>
   <button id="btn-google">
     <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
     Entrar com Google
   </button>
 </div>
 
-<div id="app" style="display:none">
+<div id="app">
   <div id="header">
     <div id="header-inner">
-      <div>
-        <div class="header-label">Personal Trainer</div>
-        <div class="header-title">Controle de Horas</div>
-      </div>
-      <div id="user-area">
+      <div><div class="h-label">Personal Trainer Pro</div><div class="h-title">Controle de Horas</div></div>
+      <div id="header-right">
         <div id="ponto-badge">🟢 --:--</div>
-        <img id="user-photo" src="" alt="" title="Clique para sair"/>
-        <button id="btn-config">⚙️</button>
+        <img id="user-photo" src="" alt=""/>
+        <button class="icon-btn" id="btn-config">⚙️</button>
       </div>
     </div>
   </div>
@@ -260,30 +140,27 @@
   <div id="main">
     <div id="meses-bar"></div>
 
-    <div id="resumo">
+    <div id="resumo-geral">
       <div id="resumo-titulo">--- ----</div>
       <div id="resumo-cards">
-        <div class="res-card"><div class="ico">📅</div><div class="val" id="r-dias-uteis">0</div><div class="lbl">Dias úteis</div></div>
-        <div class="res-card"><div class="ico">🗓️</div><div class="val" id="r-sabados" style="color:#f59e0b">0</div><div class="lbl">Sábados</div></div>
+        <div class="res-card"><div class="ico">📅</div><div class="val" id="r-dias">0</div><div class="lbl">Dias trabalhados</div></div>
+        <div class="res-card"><div class="ico">👥</div><div class="val" id="r-clientes" style="color:#60a5fa">0</div><div class="lbl">Clientes ativos</div></div>
         <div class="res-card"><div class="ico">⏱️</div><div class="val" id="r-horas">0h</div><div class="lbl">Horas totais</div></div>
-        <div class="res-card"><div class="ico">🏋️</div><div class="val" id="r-aulas" style="color:#818cf8">0</div><div class="lbl">Aulas coletivas</div></div>
+        <div class="res-card"><div class="ico">🏋️</div><div class="val" id="r-aulas" style="color:#a78bfa">0</div><div class="lbl">Aulas coletivas</div></div>
       </div>
-      <div id="resumo-financeiro">
-        <div class="fin-row"><span>Subtotal</span><span id="r-subtotal">R$ 0,00</span></div>
-        <div class="fin-row"><span>Acréscimo MEI</span><span id="r-mei" style="color:#f59e0b">+ R$ 0,00</span></div>
+      <div id="fin-rows">
+        <div class="fin-row"><span>Subtotal serviços</span><span id="r-subtotal">R$ 0,00</span></div>
+        <div class="fin-row"><span>Acréscimos</span><span id="r-acresc" style="color:#f59e0b">+ R$ 0,00</span></div>
         <div id="total-box"><span>💰 TOTAL A RECEBER</span><span id="r-total">R$ 0,00</span></div>
-      </div>
-      <div id="resumo-acoes">
-        <button class="btn-acao" id="btn-recibo">📋 Copiar Recibo</button>
-        <button class="btn-acao" id="btn-csv">📤 Exportar CSV</button>
       </div>
     </div>
 
     <div id="tabs">
       <button class="tab-btn ativo" data-tab="ponto">⏰ Ponto</button>
-      <button class="tab-btn" data-tab="manual">✏️ Manual</button>
+      <button class="tab-btn" data-tab="registrar">✏️ Registrar</button>
+      <button class="tab-btn" data-tab="clientes">👥 Clientes</button>
+      <button class="tab-btn" data-tab="acrescimos">➕ Acréscimos</button>
       <button class="tab-btn" data-tab="historico">📋 Histórico</button>
-      <button class="tab-btn" data-tab="grafico">📈 Gráfico</button>
     </div>
 
     <!-- PONTO -->
@@ -292,70 +169,107 @@
         <div id="relogio">00:00:00</div>
         <div id="data-atual"></div>
         <div id="ponto-info">
-          <p id="ponto-desde">🟢 Ponto aberto desde --:--</p>
-          <p id="ponto-horas">0h trabalhadas</p>
+          <p id="ponto-desde" style="font-size:12px;color:#10b981;font-weight:700">🟢 Ponto aberto desde --:--</p>
+          <p id="ponto-horas" style="font-size:12px;color:#059669;margin-top:2px">0h trabalhadas</p>
+          <p id="ponto-cli-nome" style="font-size:11px;color:#6b7280;margin-top:4px"></p>
         </div>
       </div>
+      <div class="campo" style="margin-bottom:12px"><label>👥 Cliente</label><select id="ponto-cliente"><option value="">-- Selecione o cliente --</option></select></div>
       <div id="ponto-btns">
-        <button class="ponto-btn" id="btn-entrada" style="background:#10b981">
-          <span class="emo">🟢</span><span>Entrada</span>
-        </button>
-        <button class="ponto-btn" id="btn-saida" style="background:#374151;opacity:0.4" disabled>
-          <span class="emo">🔴</span><span>Saída</span>
-        </button>
+        <button class="ponto-btn" id="btn-entrada" style="background:#10b981"><span class="emo">🟢</span><span>Entrada</span></button>
+        <button class="ponto-btn" id="btn-saida" style="background:#374151;opacity:.4" disabled><span class="emo">🔴</span><span>Saída</span></button>
       </div>
     </div>
 
-    <!-- MANUAL -->
-    <div id="tab-manual" class="tab-content">
-      <div id="tipo-toggle">
-        <button class="tipo-btn ativo" data-tipo="hora">🕐 Hora trabalhada</button>
-        <button class="tipo-btn" data-tipo="aula">🏋️ Aula coletiva</button>
+    <!-- REGISTRAR -->
+    <div id="tab-registrar" class="tab-content">
+      <div class="toggle" id="tipo-toggle">
+        <button class="toggle-btn ativo" data-tipo="hora">🕐 Hora trabalhada</button>
+        <button class="toggle-btn" data-tipo="aula">🏋️ Aula coletiva</button>
       </div>
-      <div class="campo">
-        <label>📅 Data</label>
-        <input type="date" id="inp-data"/>
+      <div class="campo"><label>👥 Cliente</label><select id="reg-cliente"><option value="">-- Selecione --</option></select></div>
+      <div class="campo"><label>📅 Data</label><input type="date" id="reg-data"/></div>
+      <div id="reg-campos-hora" class="grid2">
+        <div class="campo"><label>🟢 Entrada</label><input type="time" id="reg-entrada"/></div>
+        <div class="campo"><label>🔴 Saída</label><input type="time" id="reg-saida"/></div>
       </div>
-      <div id="campos-hora">
-        <div class="campo"><label>🟢 Entrada</label><input type="time" id="inp-entrada"/></div>
-        <div class="campo"><label>🔴 Saída</label><input type="time" id="inp-saida"/></div>
-      </div>
-      <div id="campos-aula" style="display:none">
-        <div class="campo"><label>📊 Qtd de aulas</label><input type="number" id="inp-aulas" min="1" placeholder="Ex: 3"/></div>
+      <div id="reg-campos-aula" style="display:none">
+        <div class="campo"><label>📊 Qtd de aulas</label><input type="number" id="reg-aulas" min="1" placeholder="Ex: 3"/></div>
       </div>
       <div id="preview">
-        <div class="prev-item"><div class="lbl">Horas</div><div class="val" id="prev-horas">0h</div></div>
-        <div class="prev-item" style="text-align:right"><div class="lbl">Ganho</div><div class="val" id="prev-ganho" style="color:#f59e0b">R$ 0,00</div></div>
+        <div><div style="font-size:11px;color:#6b7280">Horas</div><div id="prev-horas" style="font-size:20px;font-weight:800">0h</div></div>
+        <div style="text-align:right"><div style="font-size:11px;color:#6b7280">Ganho</div><div id="prev-ganho" style="font-size:20px;font-weight:800;color:#f59e0b">R$ 0,00</div></div>
       </div>
-      <button id="btn-salvar">Salvar Registro</button>
+      <button class="btn-green" id="btn-salvar-reg">Salvar Registro</button>
+    </div>
+
+    <!-- CLIENTES -->
+    <div id="tab-clientes" class="tab-content">
+      <button class="btn-green" id="btn-novo-cliente" style="margin-bottom:14px">+ Novo Cliente</button>
+      <div id="lista-clientes"></div>
+    </div>
+
+    <!-- ACRÉSCIMOS -->
+    <div id="tab-acrescimos" class="tab-content">
+      <div class="card">
+        <div class="sec-title">Adicionar Acréscimo</div>
+        <div class="campo"><label>📝 Descrição</label><input type="text" id="acresc-desc" placeholder="Ex: MEI, Hora extra, Aula avulsa..."/></div>
+        <div class="campo"><label>💰 Valor (R$)</label><input type="number" id="acresc-valor" step="0.01" min="0" placeholder="0,00"/></div>
+        <div class="campo"><label>👥 Vincular a cliente (opcional)</label><select id="acresc-cliente"><option value="">Geral</option></select></div>
+        <button class="btn-green" id="btn-add-acresc">Adicionar</button>
+      </div>
+      <div class="sec-title" style="margin-top:4px">Acréscimos do mês</div>
+      <div id="lista-acrescimos"></div>
     </div>
 
     <!-- HISTÓRICO -->
     <div id="tab-historico" class="tab-content">
+      <div class="campo"><label>🔍 Filtrar por cliente</label><select id="hist-filtro"><option value="">Todos os clientes</option></select></div>
       <div id="lista-historico"></div>
-    </div>
-
-    <!-- GRÁFICO -->
-    <div id="tab-grafico" class="tab-content">
-      <div id="grafico-card">
-        <div id="grafico-titulo">Ganhos por mês</div>
-        <canvas id="meuGrafico" height="180"></canvas>
-      </div>
-      <div id="grafico-lista"></div>
     </div>
   </div>
 </div>
 
-<!-- Modal Config -->
-<div id="modal-overlay">
-  <div id="modal">
-    <h2>⚙️ Configurações</h2>
-    <div class="campo"><label>💰 Valor por hora (R$)</label><input type="number" id="cfg-hora" step="0.01" min="0"/></div>
-    <div class="campo"><label>🏋️ Valor por aula coletiva (R$)</label><input type="number" id="cfg-aula" step="0.01" min="0"/></div>
-    <div class="campo"><label>⏱️ Duração da aula (horas)</label><input type="number" id="cfg-duracao" step="0.5" min="0.5"/></div>
-    <div class="campo"><label>📄 Acréscimo MEI fixo por mês (R$)</label><input type="number" id="cfg-mei" step="0.01" min="0"/></div>
-    <button id="btn-salvar-config">Salvar</button>
+<!-- Modal Cliente -->
+<div class="modal-overlay" id="modal-cliente">
+  <div class="modal">
+    <button class="modal-close" id="close-modal-cliente">✕</button>
+    <h2 id="modal-cli-titulo">👥 Novo Cliente</h2>
+    <div class="campo"><label>Nome</label><input type="text" id="cli-nome" placeholder="Ex: Sky Fit, João Silva..."/></div>
+    <div class="toggle" id="cli-tipo-toggle">
+      <button class="toggle-btn ativo" data-tipo="academia">🏢 Academia</button>
+      <button class="toggle-btn" data-tipo="aluno">👤 Aluno</button>
+    </div>
+    <div class="campo"><label>💰 Valor por hora (R$)</label><input type="number" id="cli-vhora" step="0.01" min="0" placeholder="0,00"/></div>
+    <div class="campo"><label>🏋️ Valor por aula coletiva (R$)</label><input type="number" id="cli-vaula" step="0.01" min="0" placeholder="0,00"/></div>
+    <div class="campo"><label>⏱️ Duração da aula (horas)</label><input type="number" id="cli-dur" step="0.5" min="0.5" placeholder="1"/></div>
+    <div class="campo"><label>📦 Pacote de aulas (0 = sem pacote)</label><input type="number" id="cli-pacote" min="0" placeholder="Ex: 10"/></div>
+    <input type="hidden" id="cli-id"/>
+    <button class="btn-green" id="btn-salvar-cliente">Salvar Cliente</button>
   </div>
+</div>
+
+<!-- Modal Config -->
+<div class="modal-overlay" id="modal-config">
+  <div class="modal">
+    <button class="modal-close" id="close-modal-config">✕</button>
+    <h2>⚙️ Meus Dados</h2>
+    <div style="font-size:12px;color:#6b7280;margin-bottom:16px">Esses dados aparecem nos seus recibos</div>
+    <div class="campo"><label>👤 Nome completo</label><input type="text" id="cfg-nome" placeholder="Seu nome"/></div>
+    <div class="campo"><label>🪪 CNPJ</label><input type="text" id="cfg-cnpj" placeholder="00.000.000/0001-00"/></div>
+    <div class="campo"><label>📍 Cidade / Estado</label><input type="text" id="cfg-cidade" placeholder="São Paulo / SP"/></div>
+    <div class="campo"><label>📱 Telefone</label><input type="text" id="cfg-tel" placeholder="(11) 99999-9999"/></div>
+    <button class="btn-green" id="btn-salvar-config">Salvar</button>
+  </div>
+</div>
+
+<!-- Recibo -->
+<div id="recibo-page">
+  <div id="recibo-acoes">
+    <button class="btn-gray" id="btn-fechar-recibo">← Voltar</button>
+    <button class="btn-green" id="btn-imprimir" style="width:auto;padding:11px 20px">🖨️ Imprimir / PDF</button>
+  </div>
+  <div id="recibo-content"></div>
 </div>
 
 <div id="toast"></div>
@@ -363,456 +277,452 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <script>
-// ── Firebase config ──────────────────────────────────────────────────────────
-const firebaseConfig = {
-  apiKey: "AIzaSyDLj4xN9FxFBfFlw5lU0XhdlawwamMS1yI",
-  authDomain: "controle-de-horas-643cc.firebaseapp.com",
-  projectId: "controle-de-horas-643cc",
-  storageBucket: "controle-de-horas-643cc.firebasestorage.app",
-  messagingSenderId: "545026414332",
-  appId: "1:545026414332:web:78ffe13502b32de70d2979"
-};
+const firebaseConfig={apiKey:"AIzaSyDLj4xN9FxFBfFlw5lU0XhdlawwamMS1yI",authDomain:"controle-de-horas-643cc.firebaseapp.com",projectId:"controle-de-horas-643cc",storageBucket:"controle-de-horas-643cc.firebasestorage.app",messagingSenderId:"545026414332",appId:"1:545026414332:web:78ffe13502b32de70d2979"};
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+const auth=firebase.auth(),db=firebase.firestore();
 
-// ── Estado ───────────────────────────────────────────────────────────────────
-let uid = null;
-let config = { valorHora:25, valorAulaColetiva:60, duracaoAula:1, mei:100 };
-let pontoAberto = null;
-let registros = [];
-let mesVis = hoje().slice(0,7);
-let todosMeses = [];
-let tipoManual = "hora";
-let chartInstance = null;
+// Estado
+let uid=null,mesVis=mesAtual(),todosMeses=[],clientes=[],registros=[],acrescimos=[],perfil={},pontoAberto=null,tipoManual="hora",tipoCliente="academia",editCliId=null;
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-const MESES_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-const MESES_S  = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+// Helpers
+const MESES_PT=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const MESES_S=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+function hoje(){return new Date().toISOString().slice(0,10);}
+function mesAtual(){return new Date().toISOString().slice(0,7);}
+function getMes(d){return d?.slice(0,7);}
+function isSab(d){return new Date(d+"T12:00:00").getDay()===6;}
+function calcH(e,s){if(!e||!s)return 0;const[eh,em]=e.split(":").map(Number),[sh,sm]=s.split(":").map(Number);let m=sh*60+sm-(eh*60+em);if(m<0)m+=1440;return+(m/60).toFixed(2);}
+function fmtH(h){const hh=Math.floor(h),mm=Math.round((h-hh)*60);return hh+"h"+(mm>0?" "+mm+"min":"");}
+function fmtR(v){return(+v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
+function fmtD(d){return d?.split("-").reverse().join("/")||"";}
+function getCli(id){return clientes.find(c=>c.id===id)||null;}
+function showToast(msg,tipo="ok"){const t=document.getElementById("toast");t.textContent=msg;t.className=tipo;t.style.display="block";setTimeout(()=>t.style.display="none",2800);}
 
-function hoje() { return new Date().toISOString().slice(0,10); }
-function mesAtual() { return new Date().toISOString().slice(0,7); }
-function getMes(d) { return d?.slice(0,7); }
-function isSab(d) { return new Date(d+"T12:00:00").getDay()===6; }
-function calcH(e,s) {
-  if(!e||!s) return 0;
-  const [eh,em]=e.split(":").map(Number), [sh,sm]=s.split(":").map(Number);
-  let m=sh*60+sm-(eh*60+em); if(m<0) m+=1440; return +(m/60).toFixed(2);
-}
-function fmtH(h) { const hh=Math.floor(h),mm=Math.round((h-hh)*60); return `${hh}h${mm>0?` ${mm}min`:""}`; }
-function fmtR(v) { return v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
-function fmtD(d) { return d?.split("-").reverse().join("/")||""; }
+// Firestore
+function up(){return`usuarios/${uid}`;}
+async function fsGet(p){try{const s=await db.doc(p).get();return s.exists?s.data():null;}catch{return null;}}
+async function fsSet(p,d){await db.doc(p).set(d,{merge:true});}
+async function fsDel(p){await db.doc(p).delete();}
+async function fsCol(p,o){try{let q=db.collection(p);if(o)q=q.orderBy(o);const s=await q.get();return s.docs.map(d=>({id:d.id,...d.data()}));}catch{return[];}}
 
-function showToast(msg, tipo="ok") {
-  const t=document.getElementById("toast");
-  t.textContent=msg; t.className=tipo; t.style.display="block";
-  setTimeout(()=>t.style.display="none", 2800);
-}
+async function carregarClientes(){clientes=await fsCol(`${up()}/clientes`,"nome");popularSelects();}
+async function carregarRegistros(){registros=await fsCol(`${up()}/meses/${mesVis}/registros`,"data");}
+async function carregarAcrescimos(){acrescimos=await fsCol(`${up()}/meses/${mesVis}/acrescimos`);}
+async function carregarPerfil(){perfil=await fsGet(`${up()}/perfil/dados/info`)||{};}
+async function carregarPonto(){pontoAberto=await fsGet(`${up()}/ponto/dados/aberto`);}
+async function carregarMeses(){try{const s=await db.collection(`${up()}/meses`).get();todosMeses=s.docs.map(d=>d.id).sort().reverse();}catch{todosMeses=[];}}
+async function ensureMes(mes){await db.doc(`${up()}/meses/${mes}`).set({criado:new Date().toISOString()},{merge:true});if(!todosMeses.includes(mes)){todosMeses=[mes,...todosMeses].sort().reverse();renderMeses();}}
 
-// ── Firestore ─────────────────────────────────────────────────────────────────
-function uRef() { return `usuarios/${uid}`; }
-
-async function fsGetConfig() {
-  try { const s=await db.doc(`${uRef()}/config/dados/config`).get(); return s.exists?s.data():config; }
-  catch { return config; }
-}
-async function fsSetConfig(c) { await db.doc(`${uRef()}/config/dados/config`).set(c); }
-
-async function fsGetPonto() {
-  try { const s=await db.doc(`${uRef()}/ponto/dados/aberto`).get(); return s.exists?s.data():null; }
-  catch { return null; }
-}
-async function fsSetPonto(p) {
-  const ref=db.doc(`${uRef()}/ponto/dados/aberto`);
-  if(p===null) await ref.delete(); else await ref.set(p);
-}
-
-async function fsGetRegistros(mes) {
-  try {
-    const snap=await db.collection(`${uRef()}/meses/${mes}/registros`).orderBy("data","desc").get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}));
-  } catch { return []; }
-}
-async function fsAddRegistro(mes, reg) {
-  const {id,...dados}=reg;
-  await db.doc(`${uRef()}/meses/${mes}/registros/${id}`).set(dados);
-}
-async function fsDelRegistro(mes, id) {
-  await db.doc(`${uRef()}/meses/${mes}/registros/${id}`).delete();
-}
-async function fsEnsureMes(mes) {
-  await db.doc(`${uRef()}/meses/${mes}`).set({criado:new Date().toISOString()},{merge:true});
-}
-async function fsListMeses() {
-  try { const s=await db.collection(`${uRef()}/meses`).get(); return s.docs.map(d=>d.id).sort().reverse(); }
-  catch { return []; }
-}
-
-// ── Auth ──────────────────────────────────────────────────────────────────────
-document.getElementById("btn-google").onclick = () => {
-  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-};
-document.getElementById("user-photo").onclick = () => {
-  if(confirm("Deseja sair?")) auth.signOut();
-};
-
-auth.onAuthStateChanged(async user => {
+// Auth
+document.getElementById("btn-google").onclick=()=>auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+document.getElementById("user-photo").onclick=()=>{if(confirm("Deseja sair?"))auth.signOut();};
+auth.onAuthStateChanged(async user=>{
   document.getElementById("splash").style.display="none";
-  if(!user) {
-    document.getElementById("login-screen").style.display="flex";
-    document.getElementById("app").style.display="none";
-    return;
-  }
+  if(!user){document.getElementById("login-screen").style.display="flex";document.getElementById("app").style.display="none";return;}
   document.getElementById("login-screen").style.display="none";
   document.getElementById("app").style.display="block";
   uid=user.uid;
   const foto=document.getElementById("user-photo");
-  if(user.photoURL){ foto.src=user.photoURL; foto.style.display="block"; }
-  await iniciar();
+  if(user.photoURL){foto.src=user.photoURL;foto.style.display="block";}
+  await Promise.all([carregarClientes(),carregarPerfil(),carregarPonto(),carregarMeses()]);
+  if(!todosMeses.includes(mesVis)&&todosMeses.length>0)mesVis=todosMeses[0];
+  await Promise.all([carregarRegistros(),carregarAcrescimos()]);
+  document.getElementById("reg-data").value=hoje();
+  renderTudo();
 });
 
-async function iniciar() {
-  config = await fsGetConfig();
-  pontoAberto = await fsGetPonto();
-  todosMeses = await fsListMeses();
-  if(!todosMeses.includes(mesVis)) mesVis=todosMeses[0]||mesAtual();
-  registros = await fsGetRegistros(mesVis);
-  renderMeses();
-  renderResumo();
-  renderHistorico();
-  renderGrafico();
-  atualizarPontoUI();
-  // data padrão
-  document.getElementById("inp-data").value=hoje();
+// Selects
+function popularSelects(){
+  ["ponto-cliente","reg-cliente","acresc-cliente","hist-filtro"].forEach(id=>{
+    const sel=document.getElementById(id);
+    const val=sel.value;
+    const prim=id==="hist-filtro"||id==="acresc-cliente"?`<option value="">${id==="hist-filtro"?"Todos os clientes":"Geral"}</option>`:'<option value="">-- Selecione --</option>';
+    sel.innerHTML=prim+clientes.map(c=>`<option value="${c.id}">${c.nome}</option>`).join("");
+    sel.value=val;
+  });
 }
 
-// ── Relógio ───────────────────────────────────────────────────────────────────
+// Relógio
 setInterval(()=>{
-  const agora=new Date();
-  document.getElementById("relogio").textContent=agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  document.getElementById("data-atual").textContent=agora.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
-  if(pontoAberto){
-    const hm=agora.toTimeString().slice(0,5);
-    document.getElementById("ponto-horas").textContent=fmtH(calcH(pontoAberto.entrada,hm))+" trabalhadas";
-  }
+  const a=new Date();
+  document.getElementById("relogio").textContent=a.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  document.getElementById("data-atual").textContent=a.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
+  if(pontoAberto)document.getElementById("ponto-horas").textContent=fmtH(calcH(pontoAberto.entrada,a.toTimeString().slice(0,5)))+" trabalhadas";
   atualizarPreview();
 },1000);
 
-// ── Ponto ─────────────────────────────────────────────────────────────────────
-function atualizarPontoUI() {
-  const badge=document.getElementById("ponto-badge");
-  const btnE=document.getElementById("btn-entrada");
-  const btnS=document.getElementById("btn-saida");
-  const info=document.getElementById("ponto-info");
+// Ponto
+function atualizarPontoUI(){
+  const badge=document.getElementById("ponto-badge"),btnE=document.getElementById("btn-entrada"),btnS=document.getElementById("btn-saida"),info=document.getElementById("ponto-info");
   if(pontoAberto){
-    badge.textContent=`🟢 ${pontoAberto.entrada}`; badge.style.display="block";
-    btnE.style.opacity="0.4"; btnE.disabled=true;
-    btnS.style.background="#ef4444"; btnS.style.opacity="1"; btnS.disabled=false;
-    document.getElementById("ponto-desde").textContent=`🟢 Ponto aberto desde ${pontoAberto.entrada}`;
+    const cli=getCli(pontoAberto.clienteId);
+    badge.textContent=`🟢 ${pontoAberto.entrada}`;badge.style.display="block";
+    btnE.style.opacity=".4";btnE.disabled=true;
+    btnS.style.background="#ef4444";btnS.style.opacity="1";btnS.disabled=false;
+    document.getElementById("ponto-desde").textContent=`🟢 Desde ${pontoAberto.entrada}`;
+    document.getElementById("ponto-cli-nome").textContent=cli?`📍 ${cli.nome}`:"";
     info.style.display="block";
-  } else {
-    badge.style.display="none";
-    btnE.style.opacity="1"; btnE.disabled=false;
-    btnS.style.background="#374151"; btnS.style.opacity="0.4"; btnS.disabled=true;
+  }else{
+    badge.style.display="none";btnE.style.opacity="1";btnE.disabled=false;
+    btnS.style.background="#374151";btnS.style.opacity=".4";btnS.disabled=true;
     info.style.display="none";
   }
 }
-
-document.getElementById("btn-entrada").onclick = async () => {
-  const agora=new Date();
-  const hm=agora.toTimeString().slice(0,5);
-  const d=agora.toISOString().slice(0,10);
-  pontoAberto={entrada:hm,data:d};
-  await fsSetPonto(pontoAberto);
-  atualizarPontoUI();
-  showToast(`✅ Entrada: ${hm}`);
+document.getElementById("btn-entrada").onclick=async()=>{
+  const clienteId=document.getElementById("ponto-cliente").value;
+  if(!clienteId)return showToast("Selecione um cliente","erro");
+  const a=new Date(),hm=a.toTimeString().slice(0,5),d=a.toISOString().slice(0,10);
+  pontoAberto={entrada:hm,data:d,clienteId};
+  await fsSet(`${up()}/ponto/dados/aberto`,pontoAberto);
+  atualizarPontoUI();showToast(`✅ Entrada: ${hm}`);
 };
-
-document.getElementById("btn-saida").onclick = async () => {
-  if(!pontoAberto) return;
-  const agora=new Date();
-  const hm=agora.toTimeString().slice(0,5);
+document.getElementById("btn-saida").onclick=async()=>{
+  if(!pontoAberto)return;
+  const a=new Date(),hm=a.toTimeString().slice(0,5);
   const horas=calcH(pontoAberto.entrada,hm);
-  const ganho=horas*config.valorHora;
-  const mes=getMes(pontoAberto.data);
-  const id=Date.now();
-  const reg={id,tipo:"hora",data:pontoAberto.data,entrada:pontoAberto.entrada,saida:hm,horas,ganho};
-  await fsEnsureMes(mes);
-  await fsAddRegistro(mes,reg);
-  if(!todosMeses.includes(mes)){ todosMeses=[mes,...todosMeses].sort().reverse(); renderMeses(); }
-  if(mes===mesVis){ registros=[reg,...registros]; renderResumo(); renderHistorico(); renderGrafico(); }
-  pontoAberto=null; await fsSetPonto(null);
-  atualizarPontoUI();
-  showToast(`🔴 Saída: ${hm} · ${fmtH(horas)} · ${fmtR(ganho)}`);
+  const cli=getCli(pontoAberto.clienteId);
+  const ganho=horas*(cli?.valorHora||0);
+  const mes=getMes(pontoAberto.data),id=String(Date.now());
+  const reg={tipo:"hora",data:pontoAberto.data,entrada:pontoAberto.entrada,saida:hm,horas,ganho,clienteId:pontoAberto.clienteId,clienteNome:cli?.nome||""};
+  await ensureMes(mes);
+  await db.doc(`${up()}/meses/${mes}/registros/${id}`).set(reg);
+  if(mes===mesVis){registros=[{id,...reg},...registros];renderResumo();renderHistorico();}
+  pontoAberto=null;await fsDel(`${up()}/ponto/dados/aberto`);
+  atualizarPontoUI();showToast(`🔴 Saída: ${hm} · ${fmtH(horas)} · ${fmtR(ganho)}`);
 };
 
-// ── Manual ────────────────────────────────────────────────────────────────────
-document.querySelectorAll(".tipo-btn").forEach(b=>{
+// Tipo toggle registrar
+document.querySelectorAll("#tipo-toggle .toggle-btn").forEach(b=>{
   b.onclick=()=>{
     tipoManual=b.dataset.tipo;
-    document.querySelectorAll(".tipo-btn").forEach(x=>x.classList.remove("ativo"));
+    document.querySelectorAll("#tipo-toggle .toggle-btn").forEach(x=>x.classList.remove("ativo"));
     b.classList.add("ativo");
-    document.getElementById("campos-hora").style.display=tipoManual==="hora"?"grid":"none";
-    document.getElementById("campos-aula").style.display=tipoManual==="aula"?"block":"none";
+    document.getElementById("reg-campos-hora").style.display=tipoManual==="hora"?"grid":"none";
+    document.getElementById("reg-campos-aula").style.display=tipoManual==="aula"?"block":"none";
     document.getElementById("preview").style.display="none";
   };
 });
 
-function atualizarPreview() {
+function atualizarPreview(){
   const prev=document.getElementById("preview");
+  const cli=getCli(document.getElementById("reg-cliente").value);
   if(tipoManual==="hora"){
-    const e=document.getElementById("inp-entrada").value;
-    const s=document.getElementById("inp-saida").value;
-    const h=calcH(e,s);
+    const h=calcH(document.getElementById("reg-entrada").value,document.getElementById("reg-saida").value);
     if(h>0){
-      prev.style.display="flex"; prev.style.background="#022c22"; prev.style.border="1px solid #10b98130";
+      prev.style.cssText="display:flex;background:#022c22;border:1px solid #10b98130;border-radius:12px;padding:12px 16px;margin-bottom:14px;justify-content:space-between;";
       document.getElementById("prev-horas").style.color="#10b981";
       document.getElementById("prev-horas").textContent=fmtH(h);
-      document.getElementById("prev-ganho").textContent=fmtR(h*config.valorHora);
-    } else { prev.style.display="none"; }
-  } else {
-    const q=Number(document.getElementById("inp-aulas").value);
+      document.getElementById("prev-ganho").textContent=fmtR(h*(cli?.valorHora||0));
+    }else prev.style.display="none";
+  }else{
+    const q=Number(document.getElementById("reg-aulas").value);
     if(q>0){
-      prev.style.display="flex"; prev.style.background="#0f172a"; prev.style.border="1px solid #818cf830";
+      prev.style.cssText="display:flex;background:#0f172a;border:1px solid #818cf830;border-radius:12px;padding:12px 16px;margin-bottom:14px;justify-content:space-between;";
       document.getElementById("prev-horas").style.color="#818cf8";
-      document.getElementById("prev-horas").textContent=fmtH(q*config.duracaoAula);
-      document.getElementById("prev-ganho").textContent=fmtR(q*config.valorAulaColetiva);
-    } else { prev.style.display="none"; }
+      document.getElementById("prev-horas").textContent=fmtH(q*(cli?.duracaoAula||1));
+      document.getElementById("prev-ganho").textContent=fmtR(q*(cli?.valorAulaColetiva||0));
+    }else prev.style.display="none";
   }
 }
+["reg-entrada","reg-saida","reg-aulas","reg-cliente"].forEach(id=>document.getElementById(id).oninput=atualizarPreview);
 
-["inp-entrada","inp-saida","inp-aulas"].forEach(id=>{
-  document.getElementById(id).oninput=atualizarPreview;
-});
-
-document.getElementById("btn-salvar").onclick = async () => {
-  const data=document.getElementById("inp-data").value||hoje();
+document.getElementById("btn-salvar-reg").onclick=async()=>{
+  const clienteId=document.getElementById("reg-cliente").value;
+  if(!clienteId)return showToast("Selecione um cliente","erro");
+  const cli=getCli(clienteId),data=document.getElementById("reg-data").value||hoje();
   let reg;
   if(tipoManual==="hora"){
-    const e=document.getElementById("inp-entrada").value;
-    const s=document.getElementById("inp-saida").value;
-    if(!e||!s) return showToast("Preencha entrada e saída","erro");
+    const e=document.getElementById("reg-entrada").value,s=document.getElementById("reg-saida").value;
+    if(!e||!s)return showToast("Preencha entrada e saída","erro");
     const horas=calcH(e,s);
-    if(horas<=0) return showToast("Horário inválido","erro");
-    reg={id:Date.now(),tipo:"hora",data,entrada:e,saida:s,horas,ganho:horas*config.valorHora};
-  } else {
-    const q=Number(document.getElementById("inp-aulas").value);
-    if(!q||q<1) return showToast("Informe a quantidade","erro");
-    reg={id:Date.now(),tipo:"aula",data,qtdAulas:q,horas:q*config.duracaoAula,ganho:q*config.valorAulaColetiva};
+    if(horas<=0)return showToast("Horário inválido","erro");
+    reg={tipo:"hora",data,entrada:e,saida:s,horas,ganho:horas*(cli?.valorHora||0),clienteId,clienteNome:cli?.nome||""};
+  }else{
+    const q=Number(document.getElementById("reg-aulas").value);
+    if(!q||q<1)return showToast("Informe a quantidade","erro");
+    reg={tipo:"aula",data,qtdAulas:q,horas:q*(cli?.duracaoAula||1),ganho:q*(cli?.valorAulaColetiva||0),clienteId,clienteNome:cli?.nome||""};
   }
-  const mes=getMes(data);
-  await fsEnsureMes(mes);
-  await fsAddRegistro(mes,reg);
-  if(!todosMeses.includes(mes)){ todosMeses=[mes,...todosMeses].sort().reverse(); renderMeses(); }
-  if(mes===mesVis){ registros=[reg,...registros]; renderResumo(); renderHistorico(); renderGrafico(); }
-  document.getElementById("inp-entrada").value="";
-  document.getElementById("inp-saida").value="";
-  document.getElementById("inp-aulas").value="";
+  const mes=getMes(data),id=String(Date.now());
+  await ensureMes(mes);
+  await db.doc(`${up()}/meses/${mes}/registros/${id}`).set(reg);
+  if(mes===mesVis){registros=[{id,...reg},...registros];renderResumo();renderHistorico();}
+  document.getElementById("reg-entrada").value="";document.getElementById("reg-saida").value="";document.getElementById("reg-aulas").value="";
   document.getElementById("preview").style.display="none";
   showToast("✅ Registro salvo!");
 };
 
-// ── Render meses ──────────────────────────────────────────────────────────────
-function renderMeses() {
-  const bar=document.getElementById("meses-bar");
-  bar.innerHTML="";
-  // botão mês atual se não existir
+// Clientes
+document.getElementById("btn-novo-cliente").onclick=()=>abrirModalCli();
+function abrirModalCli(cli=null){
+  editCliId=cli?cli.id:null;
+  document.getElementById("modal-cli-titulo").textContent=cli?"✏️ Editar Cliente":"👥 Novo Cliente";
+  document.getElementById("cli-id").value=cli?.id||"";
+  document.getElementById("cli-nome").value=cli?.nome||"";
+  document.getElementById("cli-vhora").value=cli?.valorHora||"";
+  document.getElementById("cli-vaula").value=cli?.valorAulaColetiva||"";
+  document.getElementById("cli-dur").value=cli?.duracaoAula||1;
+  document.getElementById("cli-pacote").value=cli?.pacote||0;
+  tipoCliente=cli?.tipo||"academia";
+  document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(b=>b.classList.toggle("ativo",b.dataset.tipo===tipoCliente));
+  document.getElementById("modal-cliente").classList.add("aberto");
+}
+document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(b=>{
+  b.onclick=()=>{tipoCliente=b.dataset.tipo;document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(x=>x.classList.remove("ativo"));b.classList.add("ativo");};
+});
+document.getElementById("btn-salvar-cliente").onclick=async()=>{
+  const nome=document.getElementById("cli-nome").value.trim();
+  if(!nome)return showToast("Digite o nome","erro");
+  const dados={nome,tipo:tipoCliente,valorHora:Number(document.getElementById("cli-vhora").value)||0,valorAulaColetiva:Number(document.getElementById("cli-vaula").value)||0,duracaoAula:Number(document.getElementById("cli-dur").value)||1,pacote:Number(document.getElementById("cli-pacote").value)||0,criadoEm:new Date().toISOString()};
+  const id=editCliId||String(Date.now());
+  await db.doc(`${up()}/clientes/${id}`).set(dados,{merge:true});
+  await carregarClientes();renderClientes();
+  document.getElementById("modal-cliente").classList.remove("aberto");
+  showToast(editCliId?"✅ Atualizado!":"✅ Cliente adicionado!");editCliId=null;
+};
+document.getElementById("close-modal-cliente").onclick=()=>document.getElementById("modal-cliente").classList.remove("aberto");
+document.getElementById("modal-cliente").onclick=e=>{if(e.target.id==="modal-cliente")document.getElementById("modal-cliente").classList.remove("aberto");};
+
+async function deletarCli(id){
+  if(!confirm("Deletar este cliente?"))return;
+  await fsDel(`${up()}/clientes/${id}`);
+  await carregarClientes();renderClientes();renderHistorico();showToast("Removido");
+}
+async function togglePag(clienteId){
+  const path=`${up()}/meses/${mesVis}/pagamentos/${clienteId}`;
+  const atual=await fsGet(path);
+  await fsSet(path,{pago:!atual?.pago,data:new Date().toISOString()});
+  renderClientes();showToast(!atual?.pago?"✅ Pago!":"↩️ Desmarcado");
+}
+
+// Acréscimos
+document.getElementById("btn-add-acresc").onclick=async()=>{
+  const desc=document.getElementById("acresc-desc").value.trim();
+  const valor=Number(document.getElementById("acresc-valor").value);
+  const clienteId=document.getElementById("acresc-cliente").value||null;
+  const cli=clienteId?getCli(clienteId):null;
+  if(!desc)return showToast("Digite a descrição","erro");
+  if(!valor||valor<=0)return showToast("Digite um valor válido","erro");
+  const id=String(Date.now());
+  const dados={desc,valor,clienteId:clienteId||null,clienteNome:cli?.nome||null,data:new Date().toISOString()};
+  await ensureMes(mesVis);
+  await db.doc(`${up()}/meses/${mesVis}/acrescimos/${id}`).set(dados);
+  acrescimos=[{id,...dados},...acrescimos];
+  document.getElementById("acresc-desc").value="";document.getElementById("acresc-valor").value="";document.getElementById("acresc-cliente").value="";
+  renderAcrescimos();renderResumo();showToast("✅ Acréscimo adicionado!");
+};
+async function deletarAcresc(id){
+  await fsDel(`${up()}/meses/${mesVis}/acrescimos/${id}`);
+  acrescimos=acrescimos.filter(a=>a.id!==id);renderAcrescimos();renderResumo();
+}
+
+// Meses
+function renderMeses(){
+  const bar=document.getElementById("meses-bar");bar.innerHTML="";
   if(!todosMeses.includes(mesAtual())){
-    const btn=document.createElement("button");
-    btn.className="mes-btn"; btn.style.color="#10b981"; btn.style.borderColor="#10b981";
+    const btn=document.createElement("button");btn.className="mes-btn";btn.style.color="#10b981";btn.style.borderColor="#10b981";
     btn.textContent=`+ ${MESES_S[new Date().getMonth()]}`;
-    btn.onclick=()=>{ mesVis=mesAtual(); carregarMes(); renderMeses(); };
-    bar.appendChild(btn);
+    btn.onclick=async()=>{mesVis=mesAtual();await recarregarMes();};bar.appendChild(btn);
   }
   todosMeses.forEach(m=>{
-    const [a,mo]=m.split("-");
-    const btn=document.createElement("button");
+    const[a,mo]=m.split("-"),btn=document.createElement("button");
     btn.className="mes-btn"+(m===mesVis?" ativo":"");
     btn.textContent=`${MESES_S[Number(mo)-1]} ${a}`;
-    btn.onclick=async()=>{ mesVis=m; await carregarMes(); };
-    bar.appendChild(btn);
+    btn.onclick=async()=>{mesVis=m;await recarregarMes();};bar.appendChild(btn);
   });
 }
-
-async function carregarMes() {
-  registros=await fsGetRegistros(mesVis);
-  renderMeses(); renderResumo(); renderHistorico(); renderGrafico();
+async function recarregarMes(){
+  await Promise.all([carregarRegistros(),carregarAcrescimos()]);
+  renderMeses();renderResumo();renderHistorico();renderAcrescimos();
+  if(document.getElementById("tab-clientes").classList.contains("ativo"))renderClientes();
 }
 
-// ── Render resumo ─────────────────────────────────────────────────────────────
-function renderResumo() {
-  const [ano,mes]=mesVis.split("-");
+// Resumo
+function renderResumo(){
+  const[ano,mes]=mesVis.split("-");
   document.getElementById("resumo-titulo").textContent=`${MESES_PT[Number(mes)-1]} ${ano}`;
-  const dias=new Set(registros.map(r=>r.data));
-  const uteis=[...dias].filter(d=>!isSab(d)).length;
-  const sabs=[...dias].filter(d=>isSab(d)).length;
+  const dias=new Set(registros.map(r=>r.data)).size;
   const totalH=registros.reduce((s,r)=>s+r.horas,0);
   const totalA=registros.filter(r=>r.tipo==="aula").reduce((s,r)=>s+r.qtdAulas,0);
   const sub=registros.reduce((s,r)=>s+r.ganho,0);
-  document.getElementById("r-dias-uteis").textContent=uteis;
-  document.getElementById("r-sabados").textContent=sabs;
+  const acresc=acrescimos.reduce((s,a)=>s+a.valor,0);
+  const cliAtivos=new Set(registros.map(r=>r.clienteId)).size;
+  document.getElementById("r-dias").textContent=dias;
+  document.getElementById("r-clientes").textContent=cliAtivos;
   document.getElementById("r-horas").textContent=fmtH(totalH);
   document.getElementById("r-aulas").textContent=totalA;
   document.getElementById("r-subtotal").textContent=fmtR(sub);
-  document.getElementById("r-mei").textContent=`+ ${fmtR(config.mei)}`;
-  document.getElementById("r-total").textContent=fmtR(sub+config.mei);
+  document.getElementById("r-acresc").textContent=`+ ${fmtR(acresc)}`;
+  document.getElementById("r-total").textContent=fmtR(sub+acresc);
 }
 
-// ── Render histórico ──────────────────────────────────────────────────────────
-function renderHistorico() {
-  const lista=document.getElementById("lista-historico");
-  lista.innerHTML="";
-  if(registros.length===0){ lista.innerHTML='<div class="vazio">Nenhum registro neste mês</div>'; return; }
-  [...registros].sort((a,b)=>b.data.localeCompare(a.data)).forEach(r=>{
-    const div=document.createElement("div"); div.className="reg-card";
-    const sab=isSab(r.data);
+// Clientes render
+async function renderClientes(){
+  const lista=document.getElementById("lista-clientes");lista.innerHTML="";
+  if(clientes.length===0){lista.innerHTML='<div class="vazio">Nenhum cliente cadastrado</div>';return;}
+  for(const cli of clientes){
+    const regsC=registros.filter(r=>r.clienteId===cli.id);
+    const totalH=regsC.reduce((s,r)=>s+r.horas,0);
+    const totalA=regsC.filter(r=>r.tipo==="aula").reduce((s,r)=>s+r.qtdAulas,0);
+    const totalG=regsC.reduce((s,r)=>s+r.ganho,0);
+    const acrescsC=acrescimos.filter(a=>a.clienteId===cli.id);
+    const totalAcresc=acrescsC.reduce((s,a)=>s+a.valor,0);
+    const pag=await fsGet(`${up()}/meses/${mesVis}/pagamentos/${cli.id}`);
+    const pago=pag?.pago||false;
+    const prog=cli.pacote>0?Math.min(100,Math.round(totalA/cli.pacote*100)):0;
+    const div=document.createElement("div");div.className="cliente-card";
     div.innerHTML=`
-      <div class="reg-left">
-        <div class="reg-ico" style="background:${r.tipo==="hora"?"#022c22":"#0f172a"};border:1px solid ${r.tipo==="hora"?"#10b98130":"#818cf830"}">
-          ${r.tipo==="hora"?"🕐":"🏋️"}
-        </div>
-        <div>
-          <div class="reg-titulo">${r.tipo==="hora"?`${r.entrada} → ${r.saida}`:`${r.qtdAulas} aula${r.qtdAulas>1?"s":""}`}</div>
-          <div class="reg-sub">${fmtD(r.data)}${sab?" · 🗓️ Sáb":""} · ${fmtH(r.horas)}</div>
-        </div>
+      <div class="cliente-header">
+        <div><div class="cliente-nome">${cli.nome}</div><span class="cliente-tipo ${cli.tipo==="academia"?"tipo-academia":"tipo-aluno"}">${cli.tipo==="academia"?"🏢 Academia":"👤 Aluno"}</span></div>
+        <button class="status-badge ${pago?"status-pago":"status-pendente"}" onclick="togglePag('${cli.id}')">${pago?"✅ Pago":"⏳ Pendente"}</button>
       </div>
-      <div class="reg-right">
-        <span class="reg-valor">${fmtR(r.ganho)}</span>
-        <button class="btn-del" data-id="${r.id}">✕</button>
+      ${cli.pacote>0?`<div style="font-size:11px;color:#6b7280;margin-bottom:4px">${totalA}/${cli.pacote} aulas</div><div class="pacote-bar"><div class="pacote-fill" style="width:${prog}%"></div></div>`:""}
+      <div class="cliente-stats">
+        <div class="stat-item"><div class="stat-val">${fmtH(totalH)}</div><div class="stat-lbl">Horas</div></div>
+        <div class="stat-item"><div class="stat-val">${totalA}</div><div class="stat-lbl">Aulas</div></div>
+        <div class="stat-item"><div class="stat-val" style="color:#f59e0b">${fmtR(totalG+totalAcresc)}</div><div class="stat-lbl">Total</div></div>
+      </div>
+      <div class="cliente-acoes">
+        <button class="btn-sm" onclick='gerarRecibo("${cli.id}")'>📄 Recibo</button>
+        <button class="btn-sm" onclick='abrirModalCli(${JSON.stringify(cli).replace(/'/g,"&#39;")})'>✏️ Editar</button>
+        <button class="btn-sm" style="color:#ef4444;border-color:#3f2020" onclick='deletarCli("${cli.id}")'>🗑️</button>
       </div>`;
     lista.appendChild(div);
-  });
-  lista.querySelectorAll(".btn-del").forEach(btn=>{
-    btn.onclick=async()=>{
-      const id=btn.dataset.id;
-      await fsDelRegistro(mesVis,id);
-      registros=registros.filter(r=>String(r.id)!==id);
-      renderResumo(); renderHistorico(); renderGrafico();
-    };
+  }
+}
+
+// Acréscimos render
+function renderAcrescimos(){
+  const lista=document.getElementById("lista-acrescimos");lista.innerHTML="";
+  if(acrescimos.length===0){lista.innerHTML='<div class="vazio">Nenhum acréscimo neste mês</div>';return;}
+  acrescimos.forEach(a=>{
+    const div=document.createElement("div");div.className="acresc-item";
+    div.innerHTML=`
+      <div><div class="acresc-desc">${a.desc}</div>${a.clienteNome?`<div style="font-size:11px;color:#6b7280">${a.clienteNome}</div>`:""}</div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="acresc-val">${fmtR(a.valor)}</span><button class="btn-red" onclick='deletarAcresc("${a.id}")'>✕</button></div>`;
+    lista.appendChild(div);
   });
 }
 
-// ── Render gráfico ────────────────────────────────────────────────────────────
-async function renderGrafico() {
-  const ultimos=todosMeses.slice(0,8).reverse();
-  const dados=await Promise.all(ultimos.map(async m=>{
-    const regs=await fsGetRegistros(m);
-    const ganho=regs.reduce((s,r)=>s+r.ganho,0)+config.mei;
-    const [a,mo]=m.split("-");
-    return {label:`${MESES_S[Number(mo)-1]}/${a.slice(2)}`,ganho:+ganho.toFixed(2),key:m};
-  }));
-  const ctx=document.getElementById("meuGrafico").getContext("2d");
-  if(chartInstance) chartInstance.destroy();
-  chartInstance=new Chart(ctx,{
-    type:"bar",
-    data:{
-      labels:dados.map(d=>d.label),
-      datasets:[{
-        data:dados.map(d=>d.ganho),
-        backgroundColor:dados.map(d=>d.key===mesVis?"#10b981":"#1f2937"),
-        borderRadius:8,
-      }]
-    },
-    options:{
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtR(c.raw)}}},
-      scales:{
-        x:{grid:{display:false},ticks:{color:"#6b7280",font:{size:11}}},
-        y:{display:false},
-      },
-    }
-  });
-  const lista=document.getElementById("grafico-lista");
+// Histórico
+function renderHistorico(){
+  const lista=document.getElementById("lista-historico");
+  const filtro=document.getElementById("hist-filtro").value;
   lista.innerHTML="";
-  [...dados].reverse().forEach(d=>{
-    const row=document.createElement("div"); row.className="g-row";
-    row.innerHTML=`<span style="color:${d.key===mesVis?"#10b981":"#f9fafb"}">${d.label}</span><span>${fmtR(d.ganho)}</span>`;
-    lista.appendChild(row);
+  let regs=[...registros].sort((a,b)=>b.data.localeCompare(a.data));
+  if(filtro)regs=regs.filter(r=>r.clienteId===filtro);
+  if(regs.length===0){lista.innerHTML='<div class="vazio">Nenhum registro</div>';return;}
+  regs.forEach(r=>{
+    const div=document.createElement("div");div.className="reg-card";
+    div.innerHTML=`
+      <div class="reg-left">
+        <div class="reg-ico" style="background:${r.tipo==="hora"?"#022c22":"#0f172a"};border:1px solid ${r.tipo==="hora"?"#10b98130":"#818cf830"}">${r.tipo==="hora"?"🕐":"🏋️"}</div>
+        <div>
+          <div class="reg-titulo">${r.clienteNome||"?"}</div>
+          <div class="reg-sub">${r.tipo==="hora"?`${r.entrada}→${r.saida}`:`${r.qtdAulas} aula(s)`} · ${fmtD(r.data)}${isSab(r.data)?" 🗓️":""} · ${fmtH(r.horas)}</div>
+        </div>
+      </div>
+      <div class="reg-right"><span class="reg-valor">${fmtR(r.ganho)}</span><button class="btn-red" onclick='deletarReg("${r.id}")'>✕</button></div>`;
+    lista.appendChild(div);
   });
 }
+document.getElementById("hist-filtro").onchange=renderHistorico;
+async function deletarReg(id){
+  await fsDel(`${up()}/meses/${mesVis}/registros/${id}`);
+  registros=registros.filter(r=>r.id!==id);
+  renderResumo();renderHistorico();
+}
 
-// ── Recibo ────────────────────────────────────────────────────────────────────
-document.getElementById("btn-recibo").onclick = () => {
-  const [ano,mes]=mesVis.split("-");
-  const nome=`${MESES_PT[Number(mes)-1]} ${ano}`;
-  const dias=new Set(registros.map(r=>r.data));
-  const uteis=[...dias].filter(d=>!isSab(d)).length;
-  const sabs=[...dias].filter(d=>isSab(d)).length;
-  const totalH=registros.reduce((s,r)=>s+r.horas,0);
-  const totalA=registros.filter(r=>r.tipo==="aula").reduce((s,r)=>s+r.qtdAulas,0);
-  const sub=registros.reduce((s,r)=>s+r.ganho,0);
-  const lines=[
-    `📋 RECIBO — ${nome}`,`${"─".repeat(34)}`,
-    `📅 Dias úteis: ${uteis}`,`🗓️ Sábados: ${sabs}`,
-    `⏱️ Total de horas: ${fmtH(totalH)}`,`🏋️ Aulas coletivas: ${totalA}`,
-    `${"─".repeat(34)}`,
-    ...[...registros].sort((a,b)=>a.data.localeCompare(b.data)).map(r=>
-      r.tipo==="hora"
-        ?`  ${fmtD(r.data)}${isSab(r.data)?" (Sáb)":""} · ${r.entrada}→${r.saida} · ${fmtH(r.horas)} · ${fmtR(r.ganho)}`
-        :`  ${fmtD(r.data)} · ${r.qtdAulas} aula(s) · ${fmtH(r.horas)} · ${fmtR(r.ganho)}`
-    ),
-    `${"─".repeat(34)}`,
-    `💵 Subtotal: ${fmtR(sub)}`,`📄 MEI: ${fmtR(config.mei)}`,
-    `${"═".repeat(34)}`,`💰 TOTAL A RECEBER: ${fmtR(sub+config.mei)}`,
-  ];
-  navigator.clipboard.writeText(lines.join("\n"))
-    .then(()=>showToast("📋 Recibo copiado!"))
-    .catch(()=>showToast("Erro ao copiar","erro"));
+// Recibo
+async function gerarRecibo(clienteId){
+  const cli=getCli(clienteId);if(!cli)return;
+  const regsC=registros.filter(r=>r.clienteId===clienteId);
+  const acrescsC=acrescimos.filter(a=>a.clienteId===clienteId);
+  const pag=await fsGet(`${up()}/meses/${mesVis}/pagamentos/${clienteId}`);
+  const pago=pag?.pago||false;
+  const[ano,mes]=mesVis.split("-"),nomeMes=`${MESES_PT[Number(mes)-1]} ${ano}`;
+  const totalH=regsC.reduce((s,r)=>s+r.horas,0);
+  const totalA=regsC.filter(r=>r.tipo==="aula").reduce((s,r)=>s+r.qtdAulas,0);
+  const sub=regsC.reduce((s,r)=>s+r.ganho,0);
+  const acresc=acrescsC.reduce((s,a)=>s+a.valor,0);
+  const p=perfil||{};
+  document.getElementById("recibo-content").innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:10px;letter-spacing:2px;color:#10b981;font-weight:800;text-transform:uppercase;margin-bottom:4px">Recibo de Prestação de Serviços</div>
+        <div style="font-size:22px;font-weight:900;color:#111;margin-bottom:4px">${p.nome||"Seu Nome"}</div>
+        ${p.cnpj?`<div style="font-size:12px;color:#666">CNPJ: ${p.cnpj}</div>`:""}
+        ${p.cidade?`<div style="font-size:12px;color:#666">${p.cidade}</div>`:""}
+        ${p.tel?`<div style="font-size:12px;color:#666">${p.tel}</div>`:""}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:#666">Competência</div>
+        <div style="font-size:16px;font-weight:800;color:#111;margin-bottom:6px">${nomeMes}</div>
+        <span class="rec-status ${pago?"pago":"pendente"}">${pago?"✅ Pago":"⏳ Pendente"}</span>
+      </div>
+    </div>
+    <div class="rec-section">
+      <h3>Tomador do Serviço</h3>
+      <div class="rec-row"><span>Nome / Empresa</span><span style="font-weight:700">${cli.nome}</span></div>
+      <div class="rec-row"><span>Tipo</span><span>${cli.tipo==="academia"?"🏢 Academia / Empresa":"👤 Aluno particular"}</span></div>
+    </div>
+    ${regsC.length>0?`
+    <div class="rec-section">
+      <h3>Serviços Prestados</h3>
+      ${[...regsC].sort((a,b)=>a.data.localeCompare(b.data)).map(r=>`
+        <div class="rec-row">
+          <span>${fmtD(r.data)}${isSab(r.data)?" (Sáb)":""} — ${r.tipo==="hora"?`${r.entrada} às ${r.saida} (${fmtH(r.horas)})`:`${r.qtdAulas} aula(s) coletiva(s) — ${fmtH(r.horas)}`}</span>
+          <span style="font-weight:700">${fmtR(r.ganho)}</span>
+        </div>`).join("")}
+      <div class="rec-row" style="font-weight:700;border-top:2px solid #eee;padding-top:8px;margin-top:4px">
+        <span>Subtotal — ${fmtH(totalH)} · ${totalA} aulas</span><span>${fmtR(sub)}</span>
+      </div>
+    </div>`:""}
+    ${acrescsC.length>0?`
+    <div class="rec-section">
+      <h3>Acréscimos</h3>
+      ${acrescsC.map(a=>`<div class="rec-row"><span>${a.desc}</span><span style="font-weight:700">${fmtR(a.valor)}</span></div>`).join("")}
+    </div>`:""}
+    <div class="rec-total"><span>💰 TOTAL A RECEBER</span><span>${fmtR(sub+acresc)}</span></div>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center">
+      Emitido em ${new Date().toLocaleDateString("pt-BR")}${p.nome?` por ${p.nome}`:""}${p.cnpj?` · CNPJ ${p.cnpj}`:""}
+    </div>`;
+  document.getElementById("recibo-page").style.display="block";
+  window.scrollTo(0,0);
+}
+document.getElementById("btn-fechar-recibo").onclick=()=>document.getElementById("recibo-page").style.display="none";
+document.getElementById("btn-imprimir").onclick=()=>window.print();
+
+// Config
+document.getElementById("btn-config").onclick=()=>{
+  document.getElementById("cfg-nome").value=perfil.nome||"";
+  document.getElementById("cfg-cnpj").value=perfil.cnpj||"";
+  document.getElementById("cfg-cidade").value=perfil.cidade||"";
+  document.getElementById("cfg-tel").value=perfil.tel||"";
+  document.getElementById("modal-config").classList.add("aberto");
+};
+document.getElementById("close-modal-config").onclick=()=>document.getElementById("modal-config").classList.remove("aberto");
+document.getElementById("modal-config").onclick=e=>{if(e.target.id==="modal-config")document.getElementById("modal-config").classList.remove("aberto");};
+document.getElementById("btn-salvar-config").onclick=async()=>{
+  perfil={nome:document.getElementById("cfg-nome").value.trim(),cnpj:document.getElementById("cfg-cnpj").value.trim(),cidade:document.getElementById("cfg-cidade").value.trim(),tel:document.getElementById("cfg-tel").value.trim()};
+  await fsSet(`${up()}/perfil/dados/info`,perfil);
+  document.getElementById("modal-config").classList.remove("aberto");
+  showToast("✅ Dados salvos!");
 };
 
-// ── CSV ───────────────────────────────────────────────────────────────────────
-document.getElementById("btn-csv").onclick = () => {
-  const rows=[["Data","Dia","Tipo","Entrada","Saída","Horas","Qtd Aulas","Ganho (R$)"]];
-  registros.forEach(r=>{
-    rows.push([fmtD(r.data),isSab(r.data)?"Sábado":"Dia útil",r.tipo==="hora"?"Hora trabalhada":"Aula coletiva",r.entrada||"-",r.saida||"-",r.horas.toFixed(2),r.qtdAulas||0,r.ganho.toFixed(2)]);
-  });
-  const sub=registros.reduce((s,r)=>s+r.ganho,0);
-  rows.push([],[" "," "," "," "," "," ","Subtotal:",sub.toFixed(2)]);
-  rows.push([" "," "," "," "," "," ","MEI:",config.mei.toFixed(2)]);
-  rows.push([" "," "," "," "," "," ","TOTAL:",(sub+config.mei).toFixed(2)]);
-  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");
-  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a"); a.href=url; a.download=`horas_${mesVis}.csv`; a.click();
-  URL.revokeObjectURL(url);
-};
-
-// ── Tabs ──────────────────────────────────────────────────────────────────────
+// Tabs
 document.querySelectorAll(".tab-btn").forEach(btn=>{
   btn.onclick=()=>{
     document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("ativo"));
     document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("ativo"));
     btn.classList.add("ativo");
     document.getElementById(`tab-${btn.dataset.tab}`).classList.add("ativo");
+    if(btn.dataset.tab==="clientes")renderClientes();
+    if(btn.dataset.tab==="acrescimos")renderAcrescimos();
   };
 });
 
-// ── Config ────────────────────────────────────────────────────────────────────
-document.getElementById("btn-config").onclick = () => {
-  document.getElementById("cfg-hora").value=config.valorHora;
-  document.getElementById("cfg-aula").value=config.valorAulaColetiva;
-  document.getElementById("cfg-duracao").value=config.duracaoAula;
-  document.getElementById("cfg-mei").value=config.mei;
-  document.getElementById("modal-overlay").classList.add("aberto");
-};
-document.getElementById("modal-overlay").onclick = e => {
-  if(e.target===document.getElementById("modal-overlay"))
-    document.getElementById("modal-overlay").classList.remove("aberto");
-};
-document.getElementById("btn-salvar-config").onclick = async () => {
-  config={
-    valorHora:Number(document.getElementById("cfg-hora").value),
-    valorAulaColetiva:Number(document.getElementById("cfg-aula").value),
-    duracaoAula:Number(document.getElementById("cfg-duracao").value),
-    mei:Number(document.getElementById("cfg-mei").value),
-  };
-  await fsSetConfig(config);
-  document.getElementById("modal-overlay").classList.remove("aberto");
-  renderResumo();
-  showToast("✅ Configurações salvas!");
-};
+function renderTudo(){renderMeses();renderResumo();renderHistorico();renderAcrescimos();atualizarPontoUI();}
 </script>
 </body>
 </html>
