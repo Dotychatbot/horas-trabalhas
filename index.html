@@ -1,118 +1,154 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Controle de Horas Pro</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;padding-bottom:90px;}
-    #splash{position:fixed;inset:0;background:#030712;display:flex;align-items:center;justify-content:center;color:#10b981;font-size:16px;z-index:999;flex-direction:column;gap:12px;}
-    .splash-icon{font-size:40px;}
-    #login-screen{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
-    #login-screen .icon{font-size:52px;margin-bottom:16px;}
-    #login-screen .sub{font-size:10px;letter-spacing:3px;color:#10b981;font-weight:800;text-transform:uppercase;margin-bottom:8px;}
-    #login-screen h1{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;}
-    #login-screen p{font-size:14px;color:#6b7280;margin-bottom:48px;}
-    #btn-google{background:#fff;border:none;border-radius:14px;color:#111;font-weight:800;font-size:15px;padding:16px 32px;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:inherit;}
-    #app{display:none;}
-    #header{background:#030712;border-bottom:1px solid #111827;padding:14px 20px 12px;position:sticky;top:0;z-index:20;}
-    #header-inner{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
-    .h-label{font-size:10px;letter-spacing:3px;color:#10b981;font-weight:800;text-transform:uppercase;}
-    .h-title{font-size:18px;font-weight:900;letter-spacing:-0.5px;}
-    #header-right{display:flex;gap:8px;align-items:center;}
-    #ponto-badge{font-size:11px;color:#10b981;font-weight:700;background:#022c22;border:1px solid #10b981;border-radius:8px;padding:4px 10px;display:none;}
-    #user-photo{width:32px;height:32px;border-radius:50%;border:2px solid #10b981;cursor:pointer;display:none;}
-    .icon-btn{background:#111827;border:1px solid #1f2937;color:#9ca3af;border-radius:10px;padding:7px 11px;cursor:pointer;font-size:13px;font-family:inherit;}
-    #main{max-width:520px;margin:0 auto;padding:0 16px;}
-    #meses-bar{display:flex;gap:8px;margin:14px 0 12px;overflow-x:auto;padding-bottom:4px;}
-    .mes-btn{background:#111827;border:1px solid #1f2937;border-radius:10px;color:#6b7280;padding:7px 14px;cursor:pointer;white-space:nowrap;font-size:12px;font-weight:700;font-family:inherit;flex-shrink:0;}
-    .mes-btn.ativo{background:#10b981;border-color:#10b981;color:#fff;}
-    #resumo-geral{background:#0a1628;border:1px solid #10b98120;border-radius:20px;padding:18px;margin-bottom:14px;}
-    #resumo-titulo{font-size:12px;color:#10b981;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
-    #resumo-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-    .res-card{background:#030712;border-radius:12px;padding:11px 13px;border:1px solid #111827;}
-    .res-card .ico{font-size:16px;}.res-card .val{font-size:19px;font-weight:900;margin-top:3px;}.res-card .lbl{font-size:11px;color:#6b7280;margin-top:2px;}
-    #fin-rows{border-top:1px solid #1f2937;padding-top:12px;}
-    .fin-row{display:flex;justify-content:space-between;margin-bottom:5px;}
-    .fin-row span:first-child{color:#6b7280;font-size:13px;}.fin-row span:last-child{font-weight:700;}
-    #total-box{display:flex;justify-content:space-between;align-items:center;background:#022c22;border-radius:12px;padding:12px 14px;margin-top:8px;}
-    #total-box span:first-child{color:#10b981;font-weight:800;font-size:14px;}#total-box span:last-child{color:#10b981;font-weight:900;font-size:17px;}
-    #tabs{display:flex;background:#111827;border-radius:12px;padding:4px;margin-bottom:14px;border:1px solid #1f2937;overflow-x:auto;gap:2px;}
-    .tab-btn{flex:1;padding:9px 4px;border-radius:9px;border:none;cursor:pointer;font-weight:700;font-size:11px;font-family:inherit;background:transparent;color:#6b7280;transition:all .2s;white-space:nowrap;min-width:58px;}
-    .tab-btn.ativo{background:#10b981;color:#fff;}
-    .tab-content{display:none;}.tab-content.ativo{display:block;}
-    .card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:16px;margin-bottom:12px;}
-    .campo{margin-bottom:14px;}
-    .campo label{display:block;font-size:11px;color:#6b7280;margin-bottom:6px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
-    .campo input,.campo select,.campo textarea{width:100%;background:#111827;border:1px solid #1f2937;border-radius:12px;color:#f9fafb;padding:13px 14px;font-size:14px;font-family:inherit;outline:none;}
-    .campo select option{background:#111827;}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    .btn-green{background:#10b981;border:none;border-radius:12px;color:#fff;font-weight:800;font-size:14px;padding:13px 20px;cursor:pointer;font-family:inherit;width:100%;}
-    .btn-gray{background:#1f2937;border:1px solid #374151;border-radius:12px;color:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;font-family:inherit;}
-    .btn-red{background:#1f1515;border:1px solid #3f2020;border-radius:8px;color:#ef4444;cursor:pointer;font-size:13px;padding:4px 9px;font-family:inherit;}
-    .btn-sm{background:#1f2937;border:1px solid #374151;border-radius:8px;color:#9ca3af;cursor:pointer;font-size:12px;padding:5px 10px;font-family:inherit;}
-    .toggle{display:flex;background:#111827;border-radius:12px;padding:4px;border:1px solid #1f2937;margin-bottom:14px;}
-    .toggle-btn{flex:1;padding:9px 4px;border-radius:9px;border:none;cursor:pointer;font-weight:700;font-size:12px;font-family:inherit;background:transparent;color:#6b7280;}
-    .toggle-btn.ativo{background:#1f2937;color:#10b981;}
-    .cliente-card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:14px;margin-bottom:10px;}
-    .cliente-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-    .cliente-nome{font-weight:800;font-size:15px;margin-bottom:4px;}
-    .cliente-tipo{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;}
-    .tipo-academia{background:#1a2744;color:#60a5fa;}.tipo-aluno{background:#1a1a3a;color:#a78bfa;}
-    .cliente-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
-    .stat-item{background:#030712;border-radius:10px;padding:8px;text-align:center;border:1px solid #111827;}
-    .stat-val{font-size:15px;font-weight:800;}.stat-lbl{font-size:10px;color:#6b7280;margin-top:2px;}
-    .cliente-acoes{display:flex;gap:8px;flex-wrap:wrap;}
-    .pacote-bar{background:#1f2937;border-radius:20px;height:6px;margin:8px 0;overflow:hidden;}
-    .pacote-fill{background:#10b981;height:100%;border-radius:20px;}
-    .status-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;}
-    .status-pago{background:#022c22;color:#10b981;border:1px solid #10b981 !important;}
-    .status-pendente{background:#2d1a00;color:#f59e0b;border:1px solid #f59e0b !important;}
-    .reg-card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:13px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-    .reg-left{display:flex;gap:12px;align-items:center;}
-    .reg-ico{width:36px;height:36px;border-radius:10px;font-size:17px;display:flex;align-items:center;justify-content:center;}
-    .reg-titulo{font-weight:700;font-size:13px;}.reg-sub{font-size:11px;color:#6b7280;margin-top:2px;}
-    .reg-right{display:flex;gap:8px;align-items:center;}
-    .reg-valor{font-weight:800;color:#f59e0b;font-size:14px;}
-    .acresc-item{display:flex;justify-content:space-between;align-items:center;background:#030712;border:1px solid #1f2937;border-radius:10px;padding:10px 14px;margin-bottom:8px;}
-    .acresc-desc{font-size:13px;font-weight:600;}.acresc-val{font-size:14px;font-weight:800;color:#f59e0b;}
-    #relogio-card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:28px 20px;text-align:center;margin-bottom:12px;}
-    #relogio{font-size:44px;font-weight:900;letter-spacing:-2px;}
-    #data-atual{font-size:13px;color:#6b7280;margin-top:4px;}
-    #ponto-info{margin-top:14px;background:#022c22;border:1px solid #10b981;border-radius:12px;padding:10px 16px;display:none;}
-    #ponto-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    .ponto-btn{border:none;border-radius:12px;color:#fff;font-weight:800;font-size:15px;padding:20px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:6px;}
-    .ponto-btn .emo{font-size:26px;}
-    #preview{border-radius:12px;padding:12px 16px;display:none;justify-content:space-between;margin-bottom:14px;}
-    .vazio{text-align:center;color:#374151;padding:40px 0;font-size:14px;}
-    .modal-overlay{position:fixed;inset:0;background:#000000cc;display:none;align-items:flex-end;justify-content:center;z-index:100;}
-    .modal-overlay.aberto{display:flex;}
-    .modal{background:#111827;border-radius:20px 20px 0 0;border:1px solid #1f2937;padding:24px 20px 48px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
-    .modal h2{font-weight:800;font-size:17px;margin-bottom:20px;color:#10b981;}
-    .modal-close{float:right;background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;}
-    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);border-radius:12px;padding:12px 22px;font-weight:700;font-size:13px;z-index:200;white-space:nowrap;box-shadow:0 8px 32px #000a;display:none;}
-    #toast.ok{background:#022c22;border:1px solid #10b981;color:#6ee7b7;}
-    #toast.erro{background:#2d0a0a;border:1px solid #ef4444;color:#fca5a5;}
-    .sec-title{font-size:12px;color:#10b981;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
-    #recibo-page{display:none;position:fixed;inset:0;background:#e5e7eb;z-index:500;overflow-y:auto;padding:20px;}
-    #recibo-content{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.1);color:#111;}
-    .rec-section{margin-bottom:20px;}
-    .rec-section h3{font-size:12px;font-weight:800;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #10b981;}
-    .rec-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;}
-    .rec-row:last-child{border:none;}
-    .rec-total{display:flex;justify-content:space-between;background:#022c22;border-radius:10px;padding:14px 16px;margin-top:16px;}
-    .rec-total span:first-child{color:#10b981;font-weight:800;font-size:15px;}
-    .rec-total span:last-child{color:#10b981;font-weight:900;font-size:18px;}
-    .rec-status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;}
-    .rec-status.pago{background:#d1fae5;color:#065f46;}.rec-status.pendente{background:#fef3c7;color:#92400e;}
-    #recibo-acoes{display:flex;gap:10px;margin-bottom:20px;max-width:600px;margin-left:auto;margin-right:auto;}
-    @media print{#recibo-acoes{display:none;}#recibo-page{position:static;}body{background:#fff;}}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Controle de Horas Pro</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;padding-bottom:90px;}
+#splash{position:fixed;inset:0;background:#030712;display:flex;align-items:center;justify-content:center;color:#10b981;font-size:16px;z-index:999;flex-direction:column;gap:12px;}
+#login-screen{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+#login-screen .icon{font-size:52px;margin-bottom:16px;}
+#login-screen .sub{font-size:10px;letter-spacing:3px;color:#10b981;font-weight:800;text-transform:uppercase;margin-bottom:8px;}
+#login-screen h1{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;}
+#login-screen p{font-size:14px;color:#6b7280;margin-bottom:48px;}
+#btn-google{background:#fff;border:none;border-radius:14px;color:#111;font-weight:800;font-size:15px;padding:16px 32px;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:inherit;}
+#app{display:none;}
+#header{background:#030712;border-bottom:1px solid #111827;padding:14px 20px 12px;position:sticky;top:0;z-index:20;}
+#header-inner{max-width:520px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+.h-label{font-size:10px;letter-spacing:3px;color:#10b981;font-weight:800;text-transform:uppercase;}
+.h-title{font-size:18px;font-weight:900;letter-spacing:-0.5px;}
+#header-right{display:flex;gap:8px;align-items:center;}
+#ponto-badge{font-size:11px;color:#10b981;font-weight:700;background:#022c22;border:1px solid #10b981;border-radius:8px;padding:4px 10px;display:none;}
+#user-photo{width:32px;height:32px;border-radius:50%;border:2px solid #10b981;cursor:pointer;display:none;}
+.icon-btn{background:#111827;border:1px solid #1f2937;color:#9ca3af;border-radius:10px;padding:7px 11px;cursor:pointer;font-size:13px;font-family:inherit;}
+#main{max-width:520px;margin:0 auto;padding:0 16px;}
+#meses-bar{display:flex;gap:8px;margin:14px 0 12px;overflow-x:auto;padding-bottom:4px;}
+.mes-btn{background:#111827;border:1px solid #1f2937;border-radius:10px;color:#6b7280;padding:7px 14px;cursor:pointer;white-space:nowrap;font-size:12px;font-weight:700;font-family:inherit;flex-shrink:0;}
+.mes-btn.ativo{background:#10b981;border-color:#10b981;color:#fff;}
+#resumo-geral{background:#0a1628;border:1px solid #10b98120;border-radius:20px;padding:18px;margin-bottom:14px;}
+#resumo-titulo{font-size:12px;color:#10b981;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+#resumo-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.res-card{background:#030712;border-radius:12px;padding:11px 13px;border:1px solid #111827;}
+.res-card .ico{font-size:16px;}.res-card .val{font-size:19px;font-weight:900;margin-top:3px;}.res-card .lbl{font-size:11px;color:#6b7280;margin-top:2px;}
+#fin-rows{border-top:1px solid #1f2937;padding-top:12px;}
+.fin-row{display:flex;justify-content:space-between;margin-bottom:5px;}
+.fin-row span:first-child{color:#6b7280;font-size:13px;}.fin-row span:last-child{font-weight:700;}
+#total-box{display:flex;justify-content:space-between;align-items:center;background:#022c22;border-radius:12px;padding:12px 14px;margin-top:8px;}
+#total-box span:first-child{color:#10b981;font-weight:800;font-size:14px;}#total-box span:last-child{color:#10b981;font-weight:900;font-size:17px;}
+#tabs{display:flex;background:#111827;border-radius:12px;padding:4px;margin-bottom:14px;border:1px solid #1f2937;overflow-x:auto;gap:2px;}
+.tab-btn{flex:1;padding:9px 4px;border-radius:9px;border:none;cursor:pointer;font-weight:700;font-size:10px;font-family:inherit;background:transparent;color:#6b7280;transition:all .2s;white-space:nowrap;min-width:52px;}
+.tab-btn.ativo{background:#10b981;color:#fff;}
+.tab-content{display:none;}.tab-content.ativo{display:block;}
+.card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:16px;margin-bottom:12px;}
+.campo{margin-bottom:14px;}
+.campo label{display:block;font-size:11px;color:#6b7280;margin-bottom:6px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.campo input,.campo select,.campo textarea{width:100%;background:#0d1117;border:1px solid #1f2937;border-radius:12px;color:#f9fafb;padding:13px 14px;font-size:14px;font-family:inherit;outline:none;}
+.campo select option{background:#111827;}
+.campo textarea{resize:vertical;min-height:70px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-green{background:#10b981;border:none;border-radius:12px;color:#fff;font-weight:800;font-size:14px;padding:13px 20px;cursor:pointer;font-family:inherit;width:100%;}
+.btn-gray{background:#1f2937;border:1px solid #374151;border-radius:12px;color:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;font-family:inherit;}
+.btn-red{background:#1f1515;border:1px solid #3f2020;border-radius:8px;color:#ef4444;cursor:pointer;font-size:13px;padding:4px 9px;font-family:inherit;}
+.btn-sm{background:#1f2937;border:1px solid #374151;border-radius:8px;color:#9ca3af;cursor:pointer;font-size:12px;padding:5px 10px;font-family:inherit;}
+.btn-whats{background:#075e54;border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:12px;padding:5px 10px;font-family:inherit;font-weight:700;}
+.toggle{display:flex;background:#111827;border-radius:12px;padding:4px;border:1px solid #1f2937;margin-bottom:14px;}
+.toggle-btn{flex:1;padding:9px 4px;border-radius:9px;border:none;cursor:pointer;font-weight:700;font-size:12px;font-family:inherit;background:transparent;color:#6b7280;}
+.toggle-btn.ativo{background:#1f2937;color:#10b981;}
+/* Ponto */
+#relogio-card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:20px;text-align:center;margin-bottom:12px;}
+#relogio{font-size:40px;font-weight:900;letter-spacing:-2px;}
+#data-atual{font-size:12px;color:#6b7280;margin-top:4px;}
+#cronometro-box{margin-top:14px;background:#030712;border-radius:14px;padding:14px;border:1px solid #10b98140;display:none;}
+#cronometro-label{font-size:11px;color:#10b981;font-weight:700;margin-bottom:6px;}
+#cronometro{font-size:36px;font-weight:900;color:#10b981;letter-spacing:-1px;font-variant-numeric:tabular-nums;}
+#cronometro-cliente{font-size:12px;color:#6b7280;margin-top:4px;}
+#alerta-8h{background:#2d1a00;border:1px solid #f59e0b;border-radius:12px;padding:10px 14px;margin-top:10px;display:none;font-size:13px;color:#f59e0b;font-weight:700;}
+#ponto-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ponto-btn{border:none;border-radius:12px;color:#fff;font-weight:800;font-size:15px;padding:18px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.ponto-btn .emo{font-size:26px;}
+#btn-repetir{margin-bottom:12px;background:#1a2744;border:1px solid #2a3f6f;border-radius:12px;color:#60a5fa;font-weight:700;font-size:13px;padding:12px;cursor:pointer;font-family:inherit;width:100%;display:none;}
+/* Clientes */
+.cliente-card{background:#111827;border:1px solid #1f2937;border-radius:16px;padding:14px;margin-bottom:10px;}
+.cliente-card.inadimplente{border-color:#ef444440;background:#1a0a0a;}
+.cliente-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.cliente-nome{font-weight:800;font-size:15px;margin-bottom:4px;}
+.cliente-tipo{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;}
+.tipo-academia{background:#1a2744;color:#60a5fa;}.tipo-aluno{background:#1a1a3a;color:#a78bfa;}
+.cliente-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.stat-item{background:#030712;border-radius:10px;padding:8px;text-align:center;border:1px solid #111827;}
+.stat-val{font-size:15px;font-weight:800;}.stat-lbl{font-size:10px;color:#6b7280;margin-top:2px;}
+.cliente-acoes{display:flex;gap:6px;flex-wrap:wrap;}
+.pacote-bar{background:#1f2937;border-radius:20px;height:6px;margin:8px 0;overflow:hidden;}
+.pacote-fill{background:#10b981;height:100%;border-radius:20px;}
+.status-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-family:inherit;}
+.status-pago{background:#022c22;color:#10b981;border:1px solid #10b981!important;}
+.status-pendente{background:#2d1a00;color:#f59e0b;border:1px solid #f59e0b!important;}
+.inadimplente-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:#2d0a0a;color:#ef4444;border:1px solid #ef4444;}
+/* Registros */
+.reg-card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:12px 14px;margin-bottom:8px;}
+.reg-top{display:flex;justify-content:space-between;align-items:center;}
+.reg-left{display:flex;gap:12px;align-items:center;}
+.reg-ico{width:36px;height:36px;border-radius:10px;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.reg-titulo{font-weight:700;font-size:13px;}.reg-sub{font-size:11px;color:#6b7280;margin-top:2px;}
+.reg-right{display:flex;gap:8px;align-items:center;}
+.reg-valor{font-weight:800;color:#f59e0b;font-size:14px;}
+.reg-obs{font-size:11px;color:#4b5563;margin-top:6px;padding-top:6px;border-top:1px solid #1f2937;font-style:italic;}
+/* Acréscimos */
+.acresc-item{display:flex;justify-content:space-between;align-items:center;background:#030712;border:1px solid #1f2937;border-radius:10px;padding:10px 14px;margin-bottom:8px;}
+.acresc-desc{font-size:13px;font-weight:600;}.acresc-val{font-size:14px;font-weight:800;color:#f59e0b;}
+/* Preview */
+#preview{border-radius:12px;padding:12px 16px;display:none;justify-content:space-between;margin-bottom:14px;}
+/* Calendário */
+#cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px;}
+.cal-header{font-size:10px;color:#6b7280;text-align:center;font-weight:700;padding:4px 0;}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:default;}
+.cal-day.vazio{background:transparent;color:transparent;}
+.cal-day.normal{background:#1f2937;color:#6b7280;}
+.cal-day.trabalhado{background:#10b981;color:#fff;}
+.cal-day.sabado-trab{background:#f59e0b;color:#fff;}
+.cal-day.hoje{ring:2px solid #10b981;outline:2px solid #10b981;}
+/* Gráfico barras simples */
+#grafico-clientes{margin-top:12px;}
+.graf-row{margin-bottom:10px;}
+.graf-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+.graf-label span:first-child{color:#f9fafb;font-weight:600;}
+.graf-label span:last-child{color:#f59e0b;font-weight:800;}
+.graf-bar-bg{background:#1f2937;border-radius:20px;height:8px;overflow:hidden;}
+.graf-bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#10b981,#34d399);}
+/* Vazio */
+.vazio{text-align:center;color:#374151;padding:40px 0;font-size:14px;}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:#000000cc;display:none;align-items:flex-end;justify-content:center;z-index:100;}
+.modal-overlay.aberto{display:flex;}
+.modal{background:#111827;border-radius:20px 20px 0 0;border:1px solid #1f2937;padding:24px 20px 48px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal h2{font-weight:800;font-size:17px;margin-bottom:20px;color:#10b981;}
+.modal-close{float:right;background:none;border:none;color:#6b7280;font-size:20px;cursor:pointer;}
+/* Toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);border-radius:12px;padding:12px 22px;font-weight:700;font-size:13px;z-index:200;white-space:nowrap;box-shadow:0 8px 32px #000a;display:none;}
+#toast.ok{background:#022c22;border:1px solid #10b981;color:#6ee7b7;}
+#toast.erro{background:#2d0a0a;border:1px solid #ef4444;color:#fca5a5;}
+.sec-title{font-size:12px;color:#10b981;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+/* Recibo */
+#recibo-page{display:none;position:fixed;inset:0;background:#e5e7eb;z-index:500;overflow-y:auto;padding:20px;}
+#recibo-content{max-width:600px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.1);color:#111;}
+.rec-section{margin-bottom:20px;}
+.rec-section h3{font-size:12px;font-weight:800;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #10b981;}
+.rec-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;}
+.rec-row:last-child{border:none;}
+.rec-total{display:flex;justify-content:space-between;background:#022c22;border-radius:10px;padding:14px 16px;margin-top:16px;}
+.rec-total span:first-child{color:#10b981;font-weight:800;font-size:15px;}
+.rec-total span:last-child{color:#10b981;font-weight:900;font-size:18px;}
+.rec-status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+.rec-status.pago{background:#d1fae5;color:#065f46;}.rec-status.pendente{background:#fef3c7;color:#92400e;}
+#recibo-acoes{display:flex;gap:8px;margin-bottom:20px;max-width:600px;margin-left:auto;margin-right:auto;flex-wrap:wrap;}
+@media print{#recibo-acoes{display:none;}body{background:#fff;padding:0;}}
+</style>
 </head>
 <body>
 
-<div id="splash"><div class="splash-icon">⏱️</div><div>Carregando...</div></div>
+<div id="splash"><div style="font-size:40px">⏱️</div><div>Carregando...</div></div>
 
 <div id="login-screen">
   <div class="icon">⏱️</div>
@@ -159,8 +195,9 @@
       <button class="tab-btn ativo" data-tab="ponto">⏰ Ponto</button>
       <button class="tab-btn" data-tab="registrar">✏️ Registrar</button>
       <button class="tab-btn" data-tab="clientes">👥 Clientes</button>
-      <button class="tab-btn" data-tab="acrescimos">➕ Acréscimos</button>
+      <button class="tab-btn" data-tab="acrescimos">➕ Extra</button>
       <button class="tab-btn" data-tab="historico">📋 Histórico</button>
+      <button class="tab-btn" data-tab="calendario">📅 Calendário</button>
     </div>
 
     <!-- PONTO -->
@@ -168,12 +205,14 @@
       <div id="relogio-card">
         <div id="relogio">00:00:00</div>
         <div id="data-atual"></div>
-        <div id="ponto-info">
-          <p id="ponto-desde" style="font-size:12px;color:#10b981;font-weight:700">🟢 Ponto aberto desde --:--</p>
-          <p id="ponto-horas" style="font-size:12px;color:#059669;margin-top:2px">0h trabalhadas</p>
-          <p id="ponto-cli-nome" style="font-size:11px;color:#6b7280;margin-top:4px"></p>
+        <div id="cronometro-box">
+          <div id="cronometro-label">⏱️ Tempo trabalhando</div>
+          <div id="cronometro">00:00:00</div>
+          <div id="cronometro-cliente"></div>
         </div>
+        <div id="alerta-8h">🔔 Você completou 8 horas hoje!</div>
       </div>
+      <button id="btn-repetir">🔄 Repetir último registro</button>
       <div class="campo" style="margin-bottom:12px"><label>👥 Cliente</label><select id="ponto-cliente"><option value="">-- Selecione o cliente --</option></select></div>
       <div id="ponto-btns">
         <button class="ponto-btn" id="btn-entrada" style="background:#10b981"><span class="emo">🟢</span><span>Entrada</span></button>
@@ -196,6 +235,7 @@
       <div id="reg-campos-aula" style="display:none">
         <div class="campo"><label>📊 Qtd de aulas</label><input type="number" id="reg-aulas" min="1" placeholder="Ex: 3"/></div>
       </div>
+      <div class="campo"><label>💬 Observação (opcional)</label><textarea id="reg-obs" placeholder="Ex: Aluno faltou, aula de reposição, pagou em dinheiro..."></textarea></div>
       <div id="preview">
         <div><div style="font-size:11px;color:#6b7280">Horas</div><div id="prev-horas" style="font-size:20px;font-weight:800">0h</div></div>
         <div style="text-align:right"><div style="font-size:11px;color:#6b7280">Ganho</div><div id="prev-ganho" style="font-size:20px;font-weight:800;color:#f59e0b">R$ 0,00</div></div>
@@ -227,6 +267,21 @@
       <div class="campo"><label>🔍 Filtrar por cliente</label><select id="hist-filtro"><option value="">Todos os clientes</option></select></div>
       <div id="lista-historico"></div>
     </div>
+
+    <!-- CALENDÁRIO + GRÁFICO -->
+    <div id="tab-calendario" class="tab-content">
+      <div class="card">
+        <div class="sec-title">📅 Dias trabalhados</div>
+        <div style="display:flex;gap:12px;font-size:11px;color:#6b7280;margin-bottom:8px;flex-wrap:wrap">
+          <span>🟢 Dia útil</span><span style="color:#f59e0b">🟡 Sábado</span><span>⬜ Folga</span>
+        </div>
+        <div id="cal-grid"></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">📊 Horas por cliente</div>
+        <div id="grafico-clientes"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -254,7 +309,7 @@
   <div class="modal">
     <button class="modal-close" id="close-modal-config">✕</button>
     <h2>⚙️ Meus Dados</h2>
-    <div style="font-size:12px;color:#6b7280;margin-bottom:16px">Esses dados aparecem nos seus recibos</div>
+    <div style="font-size:12px;color:#6b7280;margin-bottom:16px">Aparecem nos seus recibos</div>
     <div class="campo"><label>👤 Nome completo</label><input type="text" id="cfg-nome" placeholder="Seu nome"/></div>
     <div class="campo"><label>🪪 CNPJ</label><input type="text" id="cfg-cnpj" placeholder="00.000.000/0001-00"/></div>
     <div class="campo"><label>📍 Cidade / Estado</label><input type="text" id="cfg-cidade" placeholder="São Paulo / SP"/></div>
@@ -267,7 +322,8 @@
 <div id="recibo-page">
   <div id="recibo-acoes">
     <button class="btn-gray" id="btn-fechar-recibo">← Voltar</button>
-    <button class="btn-green" id="btn-imprimir" style="width:auto;padding:11px 20px">🖨️ Imprimir / PDF</button>
+    <button class="btn-green" id="btn-imprimir" style="width:auto;padding:11px 20px">🖨️ Imprimir/PDF</button>
+    <button class="btn-green" id="btn-whatsapp-recibo" style="width:auto;padding:11px 20px;background:#075e54">💬 WhatsApp</button>
   </div>
   <div id="recibo-content"></div>
 </div>
@@ -278,123 +334,205 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-const firebaseConfig={apiKey:"AIzaSyDLj4xN9FxFBfFlw5lU0XhdlawwamMS1yI",authDomain:"controle-de-horas-643cc.firebaseapp.com",projectId:"controle-de-horas-643cc",storageBucket:"controle-de-horas-643cc.firebasestorage.app",messagingSenderId:"545026414332",appId:"1:545026414332:web:78ffe13502b32de70d2979"};
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(),db=firebase.firestore();
+firebase.initializeApp({apiKey:"AIzaSyDLj4xN9FxFBfFlw5lU0XhdlawwamMS1yI",authDomain:"controle-de-horas-643cc.firebaseapp.com",projectId:"controle-de-horas-643cc",storageBucket:"controle-de-horas-643cc.firebasestorage.app",messagingSenderId:"545026414332",appId:"1:545026414332:web:78ffe13502b32de70d2979"});
+const auth=firebase.auth(), db=firebase.firestore();
 
 // Estado
-let uid=null,mesVis=mesAtual(),todosMeses=[],clientes=[],registros=[],acrescimos=[],perfil={},pontoAberto=null,tipoManual="hora",tipoCliente="academia",editCliId=null;
+let uid=null, mesVis=mesAtual(), todosMeses=[], clientes=[], registros=[], acrescimos=[], perfil={}, pontoAberto=null, tipoManual="hora", tipoCliente="academia", editCliId=null, ultimoReg=null, reciboAtualTexto="";
 
 // Helpers
 const MESES_PT=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const MESES_S=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const DIAS_S=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 function hoje(){return new Date().toISOString().slice(0,10);}
 function mesAtual(){return new Date().toISOString().slice(0,7);}
-function getMes(d){return d?.slice(0,7);}
+function getMes(d){return d?d.slice(0,7):"";}
 function isSab(d){return new Date(d+"T12:00:00").getDay()===6;}
-function calcH(e,s){if(!e||!s)return 0;const[eh,em]=e.split(":").map(Number),[sh,sm]=s.split(":").map(Number);let m=sh*60+sm-(eh*60+em);if(m<0)m+=1440;return+(m/60).toFixed(2);}
+function calcH(e,s){
+  if(!e||!s)return 0;
+  const[eh,em]=e.split(":").map(Number),[sh,sm]=s.split(":").map(Number);
+  let m=sh*60+sm-(eh*60+em);if(m<0)m+=1440;return+(m/60).toFixed(2);
+}
 function fmtH(h){const hh=Math.floor(h),mm=Math.round((h-hh)*60);return hh+"h"+(mm>0?" "+mm+"min":"");}
 function fmtR(v){return(+v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
-function fmtD(d){return d?.split("-").reverse().join("/")||"";}
+function fmtD(d){return d?d.split("-").reverse().join("/"):""}
 function getCli(id){return clientes.find(c=>c.id===id)||null;}
-function showToast(msg,tipo="ok"){const t=document.getElementById("toast");t.textContent=msg;t.className=tipo;t.style.display="block";setTimeout(()=>t.style.display="none",2800);}
+function showToast(msg,tipo){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.className=tipo||"ok";t.style.display="block";
+  setTimeout(()=>{t.style.display="none";},2800);
+}
 
 // Firestore
-function up(){return`usuarios/${uid}`;}
-async function fsGet(p){try{const s=await db.doc(p).get();return s.exists?s.data():null;}catch{return null;}}
+function up(){return "usuarios/"+uid;}
+async function fsGet(p){try{const s=await db.doc(p).get();return s.exists?s.data():null;}catch(e){return null;}}
 async function fsSet(p,d){await db.doc(p).set(d,{merge:true});}
 async function fsDel(p){await db.doc(p).delete();}
-async function fsCol(p,o){try{let q=db.collection(p);if(o)q=q.orderBy(o);const s=await q.get();return s.docs.map(d=>({id:d.id,...d.data()}));}catch{return[];}}
+async function fsCol(p,o){
+  try{
+    let q=db.collection(p);
+    if(o)q=q.orderBy(o);
+    const s=await q.get();
+    return s.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){return[];}
+}
 
-async function carregarClientes(){clientes=await fsCol(`${up()}/clientes`,"nome");popularSelects();}
-async function carregarRegistros(){registros=await fsCol(`${up()}/meses/${mesVis}/registros`,"data");}
-async function carregarAcrescimos(){acrescimos=await fsCol(`${up()}/meses/${mesVis}/acrescimos`);}
-async function carregarPerfil(){perfil=await fsGet(`${up()}/perfil/dados/info`)||{};}
-async function carregarPonto(){pontoAberto=await fsGet(`${up()}/ponto/dados/aberto`);}
-async function carregarMeses(){try{const s=await db.collection(`${up()}/meses`).get();todosMeses=s.docs.map(d=>d.id).sort().reverse();}catch{todosMeses=[];}}
-async function ensureMes(mes){await db.doc(`${up()}/meses/${mes}`).set({criado:new Date().toISOString()},{merge:true});if(!todosMeses.includes(mes)){todosMeses=[mes,...todosMeses].sort().reverse();renderMeses();}}
+async function carregarClientes(){clientes=await fsCol(up()+"/clientes","nome");popularSelects();}
+async function carregarRegistros(){registros=await fsCol(up()+"/meses/"+mesVis+"/registros","data");}
+async function carregarAcrescimos(){acrescimos=await fsCol(up()+"/meses/"+mesVis+"/acrescimos");}
+async function carregarPerfil(){perfil=await fsGet(up()+"/perfil/dados/info")||{};}
+async function carregarPonto(){pontoAberto=await fsGet(up()+"/ponto/dados/aberto");}
+async function carregarUltimo(){ultimoReg=await fsGet(up()+"/ponto/dados/ultimo");}
+async function carregarMeses(){
+  try{
+    const s=await db.collection(up()+"/meses").get();
+    todosMeses=s.docs.map(d=>d.id).sort().reverse();
+  }catch(e){todosMeses=[];}
+}
+async function ensureMes(mes){
+  await db.doc(up()+"/meses/"+mes).set({criado:new Date().toISOString()},{merge:true});
+  if(!todosMeses.includes(mes)){todosMeses=[mes,...todosMeses].sort().reverse();renderMeses();}
+}
 
 // Auth
 document.getElementById("btn-google").onclick=()=>auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
 document.getElementById("user-photo").onclick=()=>{if(confirm("Deseja sair?"))auth.signOut();};
-auth.onAuthStateChanged(async user=>{
+
+auth.onAuthStateChanged(async function(user){
   document.getElementById("splash").style.display="none";
-  if(!user){document.getElementById("login-screen").style.display="flex";document.getElementById("app").style.display="none";return;}
+  if(!user){
+    document.getElementById("login-screen").style.display="flex";
+    document.getElementById("app").style.display="none";
+    return;
+  }
   document.getElementById("login-screen").style.display="none";
   document.getElementById("app").style.display="block";
   uid=user.uid;
   const foto=document.getElementById("user-photo");
   if(user.photoURL){foto.src=user.photoURL;foto.style.display="block";}
-  await Promise.all([carregarClientes(),carregarPerfil(),carregarPonto(),carregarMeses()]);
+  await Promise.all([carregarClientes(),carregarPerfil(),carregarPonto(),carregarMeses(),carregarUltimo()]);
   if(!todosMeses.includes(mesVis)&&todosMeses.length>0)mesVis=todosMeses[0];
   await Promise.all([carregarRegistros(),carregarAcrescimos()]);
   document.getElementById("reg-data").value=hoje();
   renderTudo();
+  atualizarBtnRepetir();
 });
 
 // Selects
 function popularSelects(){
-  ["ponto-cliente","reg-cliente","acresc-cliente","hist-filtro"].forEach(id=>{
+  ["ponto-cliente","reg-cliente","acresc-cliente","hist-filtro"].forEach(function(id){
     const sel=document.getElementById(id);
     const val=sel.value;
-    const prim=id==="hist-filtro"||id==="acresc-cliente"?`<option value="">${id==="hist-filtro"?"Todos os clientes":"Geral"}</option>`:'<option value="">-- Selecione --</option>';
-    sel.innerHTML=prim+clientes.map(c=>`<option value="${c.id}">${c.nome}</option>`).join("");
-    sel.value=val;
+    let prim='<option value="">-- Selecione --</option>';
+    if(id==="hist-filtro")prim='<option value="">Todos os clientes</option>';
+    if(id==="acresc-cliente")prim='<option value="">Geral</option>';
+    sel.innerHTML=prim+clientes.map(c=>'<option value="'+c.id+'">'+c.nome+'</option>').join("");
+    if(val)sel.value=val;
   });
 }
 
-// Relógio
-setInterval(()=>{
-  const a=new Date();
-  document.getElementById("relogio").textContent=a.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  document.getElementById("data-atual").textContent=a.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
-  if(pontoAberto)document.getElementById("ponto-horas").textContent=fmtH(calcH(pontoAberto.entrada,a.toTimeString().slice(0,5)))+" trabalhadas";
+// Relógio + cronômetro
+let alerta8hMostrado=false;
+setInterval(function(){
+  const agora=new Date();
+  document.getElementById("relogio").textContent=agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  document.getElementById("data-atual").textContent=agora.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
+  if(pontoAberto){
+    const hm=agora.toTimeString().slice(0,5);
+    const horas=calcH(pontoAberto.entrada,hm);
+    // cronômetro
+    const totalSeg=Math.floor(horas*3600);
+    const hh=Math.floor(totalSeg/3600);
+    const mm=Math.floor((totalSeg%3600)/60);
+    const ss=totalSeg%60;
+    document.getElementById("cronometro").textContent=
+      String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":"+String(ss).padStart(2,"0");
+    // alerta 8h
+    if(horas>=8&&!alerta8hMostrado){
+      document.getElementById("alerta-8h").style.display="block";
+      alerta8hMostrado=true;
+    }
+  }
   atualizarPreview();
 },1000);
 
-// Ponto
+// Ponto UI
 function atualizarPontoUI(){
-  const badge=document.getElementById("ponto-badge"),btnE=document.getElementById("btn-entrada"),btnS=document.getElementById("btn-saida"),info=document.getElementById("ponto-info");
+  const badge=document.getElementById("ponto-badge");
+  const btnE=document.getElementById("btn-entrada");
+  const btnS=document.getElementById("btn-saida");
+  const cBox=document.getElementById("cronometro-box");
+  const alerta=document.getElementById("alerta-8h");
   if(pontoAberto){
     const cli=getCli(pontoAberto.clienteId);
-    badge.textContent=`🟢 ${pontoAberto.entrada}`;badge.style.display="block";
+    badge.textContent="🟢 "+pontoAberto.entrada;badge.style.display="block";
     btnE.style.opacity=".4";btnE.disabled=true;
     btnS.style.background="#ef4444";btnS.style.opacity="1";btnS.disabled=false;
-    document.getElementById("ponto-desde").textContent=`🟢 Desde ${pontoAberto.entrada}`;
-    document.getElementById("ponto-cli-nome").textContent=cli?`📍 ${cli.nome}`:"";
-    info.style.display="block";
+    cBox.style.display="block";
+    document.getElementById("cronometro-cliente").textContent=cli?"📍 "+cli.nome:"";
+    alerta8hMostrado=false;
   }else{
-    badge.style.display="none";btnE.style.opacity="1";btnE.disabled=false;
+    badge.style.display="none";
+    btnE.style.opacity="1";btnE.disabled=false;
     btnS.style.background="#374151";btnS.style.opacity=".4";btnS.disabled=true;
-    info.style.display="none";
+    cBox.style.display="none";
+    alerta.style.display="none";
+    alerta8hMostrado=false;
   }
 }
-document.getElementById("btn-entrada").onclick=async()=>{
+
+document.getElementById("btn-entrada").onclick=async function(){
   const clienteId=document.getElementById("ponto-cliente").value;
   if(!clienteId)return showToast("Selecione um cliente","erro");
-  const a=new Date(),hm=a.toTimeString().slice(0,5),d=a.toISOString().slice(0,10);
-  pontoAberto={entrada:hm,data:d,clienteId};
-  await fsSet(`${up()}/ponto/dados/aberto`,pontoAberto);
-  atualizarPontoUI();showToast(`✅ Entrada: ${hm}`);
-};
-document.getElementById("btn-saida").onclick=async()=>{
-  if(!pontoAberto)return;
-  const a=new Date(),hm=a.toTimeString().slice(0,5);
-  const horas=calcH(pontoAberto.entrada,hm);
-  const cli=getCli(pontoAberto.clienteId);
-  const ganho=horas*(cli?.valorHora||0);
-  const mes=getMes(pontoAberto.data),id=String(Date.now());
-  const reg={tipo:"hora",data:pontoAberto.data,entrada:pontoAberto.entrada,saida:hm,horas,ganho,clienteId:pontoAberto.clienteId,clienteNome:cli?.nome||""};
-  await ensureMes(mes);
-  await db.doc(`${up()}/meses/${mes}/registros/${id}`).set(reg);
-  if(mes===mesVis){registros=[{id,...reg},...registros];renderResumo();renderHistorico();}
-  pontoAberto=null;await fsDel(`${up()}/ponto/dados/aberto`);
-  atualizarPontoUI();showToast(`🔴 Saída: ${hm} · ${fmtH(horas)} · ${fmtR(ganho)}`);
+  const agora=new Date();
+  const hm=agora.toTimeString().slice(0,5);
+  const d=agora.toISOString().slice(0,10);
+  pontoAberto={entrada:hm,data:d,clienteId:clienteId};
+  await fsSet(up()+"/ponto/dados/aberto",pontoAberto);
+  atualizarPontoUI();
+  showToast("✅ Entrada: "+hm,"ok");
 };
 
-// Tipo toggle registrar
-document.querySelectorAll("#tipo-toggle .toggle-btn").forEach(b=>{
-  b.onclick=()=>{
+document.getElementById("btn-saida").onclick=async function(){
+  if(!pontoAberto)return;
+  const agora=new Date();
+  const hm=agora.toTimeString().slice(0,5);
+  const horas=calcH(pontoAberto.entrada,hm);
+  const cli=getCli(pontoAberto.clienteId);
+  const ganho=horas*(cli?cli.valorHora||0:0);
+  const mes=getMes(pontoAberto.data);
+  const id=String(Date.now());
+  const reg={tipo:"hora",data:pontoAberto.data,entrada:pontoAberto.entrada,saida:hm,horas:horas,ganho:ganho,clienteId:pontoAberto.clienteId,clienteNome:cli?cli.nome:"",obs:""};
+  await ensureMes(mes);
+  await db.doc(up()+"/meses/"+mes+"/registros/"+id).set(reg);
+  // salvar ultimo
+  await fsSet(up()+"/ponto/dados/ultimo",{clienteId:pontoAberto.clienteId,tipo:"hora"});
+  ultimoReg={clienteId:pontoAberto.clienteId,tipo:"hora"};
+  if(mes===mesVis){registros=[{id:id,...reg},...registros];renderResumo();renderHistorico();renderCalendario();}
+  pontoAberto=null;
+  await fsDel(up()+"/ponto/dados/aberto");
+  atualizarPontoUI();
+  atualizarBtnRepetir();
+  showToast("🔴 Saída: "+hm+" · "+fmtH(horas)+" · "+fmtR(ganho),"ok");
+};
+
+// Repetir último
+function atualizarBtnRepetir(){
+  const btn=document.getElementById("btn-repetir");
+  if(ultimoReg&&ultimoReg.clienteId){
+    const cli=getCli(ultimoReg.clienteId);
+    if(cli){btn.style.display="block";btn.textContent="🔄 Repetir: "+cli.nome;}
+  }else{btn.style.display="none";}
+}
+document.getElementById("btn-repetir").onclick=function(){
+  if(!ultimoReg)return;
+  document.getElementById("ponto-cliente").value=ultimoReg.clienteId;
+  document.getElementById("btn-entrada").click();
+};
+
+// Tipo toggle
+document.querySelectorAll("#tipo-toggle .toggle-btn").forEach(function(b){
+  b.onclick=function(){
     tipoManual=b.dataset.tipo;
     document.querySelectorAll("#tipo-toggle .toggle-btn").forEach(x=>x.classList.remove("ativo"));
     b.classList.add("ativo");
@@ -413,90 +551,109 @@ function atualizarPreview(){
       prev.style.cssText="display:flex;background:#022c22;border:1px solid #10b98130;border-radius:12px;padding:12px 16px;margin-bottom:14px;justify-content:space-between;";
       document.getElementById("prev-horas").style.color="#10b981";
       document.getElementById("prev-horas").textContent=fmtH(h);
-      document.getElementById("prev-ganho").textContent=fmtR(h*(cli?.valorHora||0));
+      document.getElementById("prev-ganho").textContent=fmtR(h*(cli?cli.valorHora||0:0));
     }else prev.style.display="none";
   }else{
     const q=Number(document.getElementById("reg-aulas").value);
     if(q>0){
       prev.style.cssText="display:flex;background:#0f172a;border:1px solid #818cf830;border-radius:12px;padding:12px 16px;margin-bottom:14px;justify-content:space-between;";
       document.getElementById("prev-horas").style.color="#818cf8";
-      document.getElementById("prev-horas").textContent=fmtH(q*(cli?.duracaoAula||1));
-      document.getElementById("prev-ganho").textContent=fmtR(q*(cli?.valorAulaColetiva||0));
+      document.getElementById("prev-horas").textContent=fmtH(q*(cli?cli.duracaoAula||1:1));
+      document.getElementById("prev-ganho").textContent=fmtR(q*(cli?cli.valorAulaColetiva||0:0));
     }else prev.style.display="none";
   }
 }
 ["reg-entrada","reg-saida","reg-aulas","reg-cliente"].forEach(id=>document.getElementById(id).oninput=atualizarPreview);
 
-document.getElementById("btn-salvar-reg").onclick=async()=>{
+// Salvar manual
+document.getElementById("btn-salvar-reg").onclick=async function(){
   const clienteId=document.getElementById("reg-cliente").value;
   if(!clienteId)return showToast("Selecione um cliente","erro");
-  const cli=getCli(clienteId),data=document.getElementById("reg-data").value||hoje();
+  const cli=getCli(clienteId);
+  const data=document.getElementById("reg-data").value||hoje();
+  const obs=document.getElementById("reg-obs").value.trim();
   let reg;
   if(tipoManual==="hora"){
-    const e=document.getElementById("reg-entrada").value,s=document.getElementById("reg-saida").value;
+    const e=document.getElementById("reg-entrada").value;
+    const s=document.getElementById("reg-saida").value;
     if(!e||!s)return showToast("Preencha entrada e saída","erro");
     const horas=calcH(e,s);
     if(horas<=0)return showToast("Horário inválido","erro");
-    reg={tipo:"hora",data,entrada:e,saida:s,horas,ganho:horas*(cli?.valorHora||0),clienteId,clienteNome:cli?.nome||""};
+    reg={tipo:"hora",data:data,entrada:e,saida:s,horas:horas,ganho:horas*(cli?cli.valorHora||0:0),clienteId:clienteId,clienteNome:cli?cli.nome:"",obs:obs};
   }else{
     const q=Number(document.getElementById("reg-aulas").value);
     if(!q||q<1)return showToast("Informe a quantidade","erro");
-    reg={tipo:"aula",data,qtdAulas:q,horas:q*(cli?.duracaoAula||1),ganho:q*(cli?.valorAulaColetiva||0),clienteId,clienteNome:cli?.nome||""};
+    reg={tipo:"aula",data:data,qtdAulas:q,horas:q*(cli?cli.duracaoAula||1:1),ganho:q*(cli?cli.valorAulaColetiva||0:0),clienteId:clienteId,clienteNome:cli?cli.nome:"",obs:obs};
   }
-  const mes=getMes(data),id=String(Date.now());
+  const mes=getMes(data);
+  const id=String(Date.now());
   await ensureMes(mes);
-  await db.doc(`${up()}/meses/${mes}/registros/${id}`).set(reg);
-  if(mes===mesVis){registros=[{id,...reg},...registros];renderResumo();renderHistorico();}
-  document.getElementById("reg-entrada").value="";document.getElementById("reg-saida").value="";document.getElementById("reg-aulas").value="";
+  await db.doc(up()+"/meses/"+mes+"/registros/"+id).set(reg);
+  await fsSet(up()+"/ponto/dados/ultimo",{clienteId:clienteId,tipo:tipoManual});
+  ultimoReg={clienteId:clienteId,tipo:tipoManual};
+  if(mes===mesVis){registros=[{id:id,...reg},...registros];renderResumo();renderHistorico();renderCalendario();}
+  document.getElementById("reg-entrada").value="";
+  document.getElementById("reg-saida").value="";
+  document.getElementById("reg-aulas").value="";
+  document.getElementById("reg-obs").value="";
   document.getElementById("preview").style.display="none";
-  showToast("✅ Registro salvo!");
+  atualizarBtnRepetir();
+  showToast("✅ Registro salvo!","ok");
 };
 
 // Clientes
 document.getElementById("btn-novo-cliente").onclick=()=>abrirModalCli();
-function abrirModalCli(cli=null){
+function abrirModalCli(cli){
+  cli=cli||null;
   editCliId=cli?cli.id:null;
   document.getElementById("modal-cli-titulo").textContent=cli?"✏️ Editar Cliente":"👥 Novo Cliente";
-  document.getElementById("cli-id").value=cli?.id||"";
-  document.getElementById("cli-nome").value=cli?.nome||"";
-  document.getElementById("cli-vhora").value=cli?.valorHora||"";
-  document.getElementById("cli-vaula").value=cli?.valorAulaColetiva||"";
-  document.getElementById("cli-dur").value=cli?.duracaoAula||1;
-  document.getElementById("cli-pacote").value=cli?.pacote||0;
-  tipoCliente=cli?.tipo||"academia";
+  document.getElementById("cli-nome").value=cli?cli.nome||"":"";
+  document.getElementById("cli-vhora").value=cli?cli.valorHora||"":"";
+  document.getElementById("cli-vaula").value=cli?cli.valorAulaColetiva||"":"";
+  document.getElementById("cli-dur").value=cli?cli.duracaoAula||1:1;
+  document.getElementById("cli-pacote").value=cli?cli.pacote||0:0;
+  tipoCliente=cli?cli.tipo||"academia":"academia";
   document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(b=>b.classList.toggle("ativo",b.dataset.tipo===tipoCliente));
   document.getElementById("modal-cliente").classList.add("aberto");
 }
-document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(b=>{
-  b.onclick=()=>{tipoCliente=b.dataset.tipo;document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(x=>x.classList.remove("ativo"));b.classList.add("ativo");};
+document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(function(b){
+  b.onclick=function(){
+    tipoCliente=b.dataset.tipo;
+    document.querySelectorAll("#cli-tipo-toggle .toggle-btn").forEach(x=>x.classList.remove("ativo"));
+    b.classList.add("ativo");
+  };
 });
-document.getElementById("btn-salvar-cliente").onclick=async()=>{
+document.getElementById("btn-salvar-cliente").onclick=async function(){
   const nome=document.getElementById("cli-nome").value.trim();
   if(!nome)return showToast("Digite o nome","erro");
-  const dados={nome,tipo:tipoCliente,valorHora:Number(document.getElementById("cli-vhora").value)||0,valorAulaColetiva:Number(document.getElementById("cli-vaula").value)||0,duracaoAula:Number(document.getElementById("cli-dur").value)||1,pacote:Number(document.getElementById("cli-pacote").value)||0,criadoEm:new Date().toISOString()};
+  const dados={nome:nome,tipo:tipoCliente,valorHora:Number(document.getElementById("cli-vhora").value)||0,valorAulaColetiva:Number(document.getElementById("cli-vaula").value)||0,duracaoAula:Number(document.getElementById("cli-dur").value)||1,pacote:Number(document.getElementById("cli-pacote").value)||0,criadoEm:new Date().toISOString()};
   const id=editCliId||String(Date.now());
-  await db.doc(`${up()}/clientes/${id}`).set(dados,{merge:true});
+  await db.doc(up()+"/clientes/"+id).set(dados,{merge:true});
   await carregarClientes();renderClientes();
   document.getElementById("modal-cliente").classList.remove("aberto");
-  showToast(editCliId?"✅ Atualizado!":"✅ Cliente adicionado!");editCliId=null;
+  showToast(editCliId?"✅ Atualizado!":"✅ Cliente adicionado!","ok");
+  editCliId=null;
 };
 document.getElementById("close-modal-cliente").onclick=()=>document.getElementById("modal-cliente").classList.remove("aberto");
-document.getElementById("modal-cliente").onclick=e=>{if(e.target.id==="modal-cliente")document.getElementById("modal-cliente").classList.remove("aberto");};
+document.getElementById("modal-cliente").onclick=function(e){if(e.target.id==="modal-cliente")document.getElementById("modal-cliente").classList.remove("aberto");};
 
 async function deletarCli(id){
   if(!confirm("Deletar este cliente?"))return;
-  await fsDel(`${up()}/clientes/${id}`);
-  await carregarClientes();renderClientes();renderHistorico();showToast("Removido");
+  await fsDel(up()+"/clientes/"+id);
+  await carregarClientes();renderClientes();renderHistorico();
+  showToast("Removido","ok");
 }
 async function togglePag(clienteId){
-  const path=`${up()}/meses/${mesVis}/pagamentos/${clienteId}`;
+  const path=up()+"/meses/"+mesVis+"/pagamentos/"+clienteId;
   const atual=await fsGet(path);
-  await fsSet(path,{pago:!atual?.pago,data:new Date().toISOString()});
-  renderClientes();showToast(!atual?.pago?"✅ Pago!":"↩️ Desmarcado");
+  const novoPago=!(atual&&atual.pago);
+  await fsSet(path,{pago:novoPago,data:new Date().toISOString()});
+  renderClientes();
+  showToast(novoPago?"✅ Pago!":"↩️ Desmarcado","ok");
 }
 
 // Acréscimos
-document.getElementById("btn-add-acresc").onclick=async()=>{
+document.getElementById("btn-add-acresc").onclick=async function(){
   const desc=document.getElementById("acresc-desc").value.trim();
   const valor=Number(document.getElementById("acresc-valor").value);
   const clienteId=document.getElementById("acresc-cliente").value||null;
@@ -504,46 +661,54 @@ document.getElementById("btn-add-acresc").onclick=async()=>{
   if(!desc)return showToast("Digite a descrição","erro");
   if(!valor||valor<=0)return showToast("Digite um valor válido","erro");
   const id=String(Date.now());
-  const dados={desc,valor,clienteId:clienteId||null,clienteNome:cli?.nome||null,data:new Date().toISOString()};
+  const dados={desc:desc,valor:valor,clienteId:clienteId||null,clienteNome:cli?cli.nome:null,data:new Date().toISOString()};
   await ensureMes(mesVis);
-  await db.doc(`${up()}/meses/${mesVis}/acrescimos/${id}`).set(dados);
-  acrescimos=[{id,...dados},...acrescimos];
-  document.getElementById("acresc-desc").value="";document.getElementById("acresc-valor").value="";document.getElementById("acresc-cliente").value="";
-  renderAcrescimos();renderResumo();showToast("✅ Acréscimo adicionado!");
+  await db.doc(up()+"/meses/"+mesVis+"/acrescimos/"+id).set(dados);
+  acrescimos=[{id:id,...dados},...acrescimos];
+  document.getElementById("acresc-desc").value="";
+  document.getElementById("acresc-valor").value="";
+  document.getElementById("acresc-cliente").value="";
+  renderAcrescimos();renderResumo();
+  showToast("✅ Acréscimo adicionado!","ok");
 };
 async function deletarAcresc(id){
-  await fsDel(`${up()}/meses/${mesVis}/acrescimos/${id}`);
-  acrescimos=acrescimos.filter(a=>a.id!==id);renderAcrescimos();renderResumo();
+  await fsDel(up()+"/meses/"+mesVis+"/acrescimos/"+id);
+  acrescimos=acrescimos.filter(a=>a.id!==id);
+  renderAcrescimos();renderResumo();
 }
 
 // Meses
 function renderMeses(){
   const bar=document.getElementById("meses-bar");bar.innerHTML="";
   if(!todosMeses.includes(mesAtual())){
-    const btn=document.createElement("button");btn.className="mes-btn";btn.style.color="#10b981";btn.style.borderColor="#10b981";
-    btn.textContent=`+ ${MESES_S[new Date().getMonth()]}`;
-    btn.onclick=async()=>{mesVis=mesAtual();await recarregarMes();};bar.appendChild(btn);
+    const btn=document.createElement("button");btn.className="mes-btn";
+    btn.style.color="#10b981";btn.style.borderColor="#10b981";
+    btn.textContent="+ "+MESES_S[new Date().getMonth()];
+    btn.onclick=async function(){mesVis=mesAtual();await recarregarMes();};
+    bar.appendChild(btn);
   }
-  todosMeses.forEach(m=>{
-    const[a,mo]=m.split("-"),btn=document.createElement("button");
+  todosMeses.forEach(function(m){
+    const parts=m.split("-");
+    const btn=document.createElement("button");
     btn.className="mes-btn"+(m===mesVis?" ativo":"");
-    btn.textContent=`${MESES_S[Number(mo)-1]} ${a}`;
-    btn.onclick=async()=>{mesVis=m;await recarregarMes();};bar.appendChild(btn);
+    btn.textContent=MESES_S[Number(parts[1])-1]+" "+parts[0];
+    btn.onclick=async function(){mesVis=m;await recarregarMes();};
+    bar.appendChild(btn);
   });
 }
 async function recarregarMes(){
   await Promise.all([carregarRegistros(),carregarAcrescimos()]);
-  renderMeses();renderResumo();renderHistorico();renderAcrescimos();
+  renderMeses();renderResumo();renderHistorico();renderAcrescimos();renderCalendario();
   if(document.getElementById("tab-clientes").classList.contains("ativo"))renderClientes();
 }
 
 // Resumo
 function renderResumo(){
-  const[ano,mes]=mesVis.split("-");
-  document.getElementById("resumo-titulo").textContent=`${MESES_PT[Number(mes)-1]} ${ano}`;
+  const parts=mesVis.split("-");
+  document.getElementById("resumo-titulo").textContent=MESES_PT[Number(parts[1])-1]+" "+parts[0];
   const dias=new Set(registros.map(r=>r.data)).size;
   const totalH=registros.reduce((s,r)=>s+r.horas,0);
-  const totalA=registros.filter(r=>r.tipo==="aula").reduce((s,r)=>s+r.qtdAulas,0);
+  const totalA=registros.filter(r=>r.tipo==="aula").reduce((s,r)=>s+(r.qtdAulas||0),0);
   const sub=registros.reduce((s,r)=>s+r.ganho,0);
   const acresc=acrescimos.reduce((s,a)=>s+a.valor,0);
   const cliAtivos=new Set(registros.map(r=>r.clienteId)).size;
@@ -552,7 +717,7 @@ function renderResumo(){
   document.getElementById("r-horas").textContent=fmtH(totalH);
   document.getElementById("r-aulas").textContent=totalA;
   document.getElementById("r-subtotal").textContent=fmtR(sub);
-  document.getElementById("r-acresc").textContent=`+ ${fmtR(acresc)}`;
+  document.getElementById("r-acresc").textContent="+ "+fmtR(acresc);
   document.getElementById("r-total").textContent=fmtR(sub+acresc);
 }
 
@@ -560,33 +725,42 @@ function renderResumo(){
 async function renderClientes(){
   const lista=document.getElementById("lista-clientes");lista.innerHTML="";
   if(clientes.length===0){lista.innerHTML='<div class="vazio">Nenhum cliente cadastrado</div>';return;}
-  for(const cli of clientes){
+  for(let i=0;i<clientes.length;i++){
+    const cli=clientes[i];
     const regsC=registros.filter(r=>r.clienteId===cli.id);
     const totalH=regsC.reduce((s,r)=>s+r.horas,0);
-    const totalA=regsC.filter(r=>r.tipo==="aula").reduce((s,r)=>s+r.qtdAulas,0);
+    const totalA=regsC.filter(r=>r.tipo==="aula").reduce((s,r)=>s+(r.qtdAulas||0),0);
     const totalG=regsC.reduce((s,r)=>s+r.ganho,0);
     const acrescsC=acrescimos.filter(a=>a.clienteId===cli.id);
     const totalAcresc=acrescsC.reduce((s,a)=>s+a.valor,0);
-    const pag=await fsGet(`${up()}/meses/${mesVis}/pagamentos/${cli.id}`);
-    const pago=pag?.pago||false;
+    const pag=await fsGet(up()+"/meses/"+mesVis+"/pagamentos/"+cli.id);
+    const pago=pag?pag.pago:false;
+    const temRegistros=regsC.length>0;
+    const inadimplente=temRegistros&&!pago;
     const prog=cli.pacote>0?Math.min(100,Math.round(totalA/cli.pacote*100)):0;
-    const div=document.createElement("div");div.className="cliente-card";
-    div.innerHTML=`
-      <div class="cliente-header">
-        <div><div class="cliente-nome">${cli.nome}</div><span class="cliente-tipo ${cli.tipo==="academia"?"tipo-academia":"tipo-aluno"}">${cli.tipo==="academia"?"🏢 Academia":"👤 Aluno"}</span></div>
-        <button class="status-badge ${pago?"status-pago":"status-pendente"}" onclick="togglePag('${cli.id}')">${pago?"✅ Pago":"⏳ Pendente"}</button>
-      </div>
-      ${cli.pacote>0?`<div style="font-size:11px;color:#6b7280;margin-bottom:4px">${totalA}/${cli.pacote} aulas</div><div class="pacote-bar"><div class="pacote-fill" style="width:${prog}%"></div></div>`:""}
-      <div class="cliente-stats">
-        <div class="stat-item"><div class="stat-val">${fmtH(totalH)}</div><div class="stat-lbl">Horas</div></div>
-        <div class="stat-item"><div class="stat-val">${totalA}</div><div class="stat-lbl">Aulas</div></div>
-        <div class="stat-item"><div class="stat-val" style="color:#f59e0b">${fmtR(totalG+totalAcresc)}</div><div class="stat-lbl">Total</div></div>
-      </div>
-      <div class="cliente-acoes">
-        <button class="btn-sm" onclick='gerarRecibo("${cli.id}")'>📄 Recibo</button>
-        <button class="btn-sm" onclick='abrirModalCli(${JSON.stringify(cli).replace(/'/g,"&#39;")})'>✏️ Editar</button>
-        <button class="btn-sm" style="color:#ef4444;border-color:#3f2020" onclick='deletarCli("${cli.id}")'>🗑️</button>
-      </div>`;
+    const div=document.createElement("div");
+    div.className="cliente-card"+(inadimplente?" inadimplente":"");
+    const inadBadge=inadimplente?'<span class="inadimplente-badge">⚠️ Pendente</span>':"";
+    div.innerHTML=
+      '<div class="cliente-header">'+
+        '<div>'+
+          '<div class="cliente-nome">'+cli.nome+'</div>'+
+          '<span class="cliente-tipo '+(cli.tipo==="academia"?"tipo-academia":"tipo-aluno")+'">'+(cli.tipo==="academia"?"🏢 Academia":"👤 Aluno")+'</span>'+
+          (inadBadge?' '+inadBadge:'')+
+        '</div>'+
+        '<button class="status-badge '+(pago?"status-pago":"status-pendente")+'" onclick="togglePag(\''+cli.id+'\')">'+(pago?"✅ Pago":"⏳ Pendente")+'</button>'+
+      '</div>'+
+      (cli.pacote>0?'<div style="font-size:11px;color:#6b7280;margin-bottom:4px">'+totalA+'/'+cli.pacote+' aulas</div><div class="pacote-bar"><div class="pacote-fill" style="width:'+prog+'%"></div></div>':'')+
+      '<div class="cliente-stats">'+
+        '<div class="stat-item"><div class="stat-val">'+fmtH(totalH)+'</div><div class="stat-lbl">Horas</div></div>'+
+        '<div class="stat-item"><div class="stat-val">'+totalA+'</div><div class="stat-lbl">Aulas</div></div>'+
+        '<div class="stat-item"><div class="stat-val" style="color:#f59e0b">'+fmtR(totalG+totalAcresc)+'</div><div class="stat-lbl">Total</div></div>'+
+      '</div>'+
+      '<div class="cliente-acoes">'+
+        '<button class="btn-sm" onclick=\'gerarRecibo("'+cli.id+'")\'>📄 Recibo</button>'+
+        '<button class="btn-sm" onclick=\'abrirModalCli('+JSON.stringify(cli).replace(/'/g,"&#39;")+')\'>✏️ Editar</button>'+
+        '<button class="btn-sm" style="color:#ef4444;border-color:#3f2020" onclick=\'deletarCli("'+cli.id+'")\'>🗑️</button>'+
+      '</div>';
     lista.appendChild(div);
   }
 }
@@ -595,11 +769,12 @@ async function renderClientes(){
 function renderAcrescimos(){
   const lista=document.getElementById("lista-acrescimos");lista.innerHTML="";
   if(acrescimos.length===0){lista.innerHTML='<div class="vazio">Nenhum acréscimo neste mês</div>';return;}
-  acrescimos.forEach(a=>{
+  acrescimos.forEach(function(a){
     const div=document.createElement("div");div.className="acresc-item";
-    div.innerHTML=`
-      <div><div class="acresc-desc">${a.desc}</div>${a.clienteNome?`<div style="font-size:11px;color:#6b7280">${a.clienteNome}</div>`:""}</div>
-      <div style="display:flex;gap:8px;align-items:center"><span class="acresc-val">${fmtR(a.valor)}</span><button class="btn-red" onclick='deletarAcresc("${a.id}")'>✕</button></div>`;
+    div.innerHTML=
+      '<div><div class="acresc-desc">'+a.desc+'</div>'+(a.clienteNome?'<div style="font-size:11px;color:#6b7280">'+a.clienteNome+'</div>':'')+
+      '</div><div style="display:flex;gap:8px;align-items:center"><span class="acresc-val">'+fmtR(a.valor)+'</span>'+
+      '<button class="btn-red" onclick=\'deletarAcresc("'+a.id+'")\'>✕</button></div>';
     lista.appendChild(div);
   });
 }
@@ -612,89 +787,175 @@ function renderHistorico(){
   let regs=[...registros].sort((a,b)=>b.data.localeCompare(a.data));
   if(filtro)regs=regs.filter(r=>r.clienteId===filtro);
   if(regs.length===0){lista.innerHTML='<div class="vazio">Nenhum registro</div>';return;}
-  regs.forEach(r=>{
+  regs.forEach(function(r){
     const div=document.createElement("div");div.className="reg-card";
-    div.innerHTML=`
-      <div class="reg-left">
-        <div class="reg-ico" style="background:${r.tipo==="hora"?"#022c22":"#0f172a"};border:1px solid ${r.tipo==="hora"?"#10b98130":"#818cf830"}">${r.tipo==="hora"?"🕐":"🏋️"}</div>
-        <div>
-          <div class="reg-titulo">${r.clienteNome||"?"}</div>
-          <div class="reg-sub">${r.tipo==="hora"?`${r.entrada}→${r.saida}`:`${r.qtdAulas} aula(s)`} · ${fmtD(r.data)}${isSab(r.data)?" 🗓️":""} · ${fmtH(r.horas)}</div>
-        </div>
-      </div>
-      <div class="reg-right"><span class="reg-valor">${fmtR(r.ganho)}</span><button class="btn-red" onclick='deletarReg("${r.id}")'>✕</button></div>`;
+    const bgIco=r.tipo==="hora"?"#022c22":"#0f172a";
+    const borIco=r.tipo==="hora"?"#10b98130":"#818cf830";
+    const emoIco=r.tipo==="hora"?"🕐":"🏋️";
+    const subtxt=r.tipo==="hora"?(r.entrada+"→"+r.saida):(r.qtdAulas+" aula(s)");
+    div.innerHTML=
+      '<div class="reg-top">'+
+        '<div class="reg-left">'+
+          '<div class="reg-ico" style="background:'+bgIco+';border:1px solid '+borIco+'">'+emoIco+'</div>'+
+          '<div>'+
+            '<div class="reg-titulo">'+(r.clienteNome||"?")+'</div>'+
+            '<div class="reg-sub">'+subtxt+' · '+fmtD(r.data)+(isSab(r.data)?" 🗓️":"")+" · "+fmtH(r.horas)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="reg-right">'+
+          '<span class="reg-valor">'+fmtR(r.ganho)+'</span>'+
+          '<button class="btn-red" onclick=\'deletarReg("'+r.id+'")\'>✕</button>'+
+        '</div>'+
+      '</div>'+
+      (r.obs?'<div class="reg-obs">💬 '+r.obs+'</div>':"");
     lista.appendChild(div);
   });
 }
 document.getElementById("hist-filtro").onchange=renderHistorico;
 async function deletarReg(id){
-  await fsDel(`${up()}/meses/${mesVis}/registros/${id}`);
+  await fsDel(up()+"/meses/"+mesVis+"/registros/"+id);
   registros=registros.filter(r=>r.id!==id);
-  renderResumo();renderHistorico();
+  renderResumo();renderHistorico();renderCalendario();
+}
+
+// Calendário
+function renderCalendario(){
+  const parts=mesVis.split("-");
+  const ano=Number(parts[0]),mes=Number(parts[1]);
+  const grid=document.getElementById("cal-grid");grid.innerHTML="";
+  DIAS_S.forEach(function(d){
+    const h=document.createElement("div");h.className="cal-header";h.textContent=d;grid.appendChild(h);
+  });
+  const primeiroDia=new Date(ano,mes-1,1).getDay();
+  const diasNoMes=new Date(ano,mes,0).getDate();
+  const diasTrabalhados=new Set(registros.map(r=>r.data));
+  const hojeStr=hoje();
+  for(let i=0;i<primeiroDia;i++){
+    const vz=document.createElement("div");vz.className="cal-day vazio";vz.textContent="·";grid.appendChild(vz);
+  }
+  for(let d=1;d<=diasNoMes;d++){
+    const dStr=ano+"-"+String(mes).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    const cel=document.createElement("div");
+    const trabalhado=diasTrabalhados.has(dStr);
+    const sab=new Date(dStr+"T12:00:00").getDay()===6;
+    let cls="cal-day ";
+    if(trabalhado)cls+=sab?"sabado-trab":"trabalhado";
+    else cls+="normal";
+    if(dStr===hojeStr)cel.style.outline="2px solid #10b981";
+    cel.className=cls;cel.textContent=d;
+    grid.appendChild(cel);
+  }
+  // Gráfico horas por cliente
+  const graf=document.getElementById("grafico-clientes");graf.innerHTML="";
+  const maxH=clientes.reduce((mx,c)=>{
+    const h=registros.filter(r=>r.clienteId===c.id).reduce((s,r)=>s+r.horas,0);
+    return h>mx?h:mx;
+  },0);
+  if(maxH===0){graf.innerHTML='<div class="vazio">Sem registros</div>';return;}
+  clientes.forEach(function(c){
+    const regsC=registros.filter(r=>r.clienteId===c.id);
+    const h=regsC.reduce((s,r)=>s+r.horas,0);
+    const g=regsC.reduce((s,r)=>s+r.ganho,0);
+    if(h===0)return;
+    const pct=Math.round(h/maxH*100);
+    const row=document.createElement("div");row.className="graf-row";
+    row.innerHTML=
+      '<div class="graf-label"><span>'+c.nome+'</span><span>'+fmtH(h)+' · '+fmtR(g)+'</span></div>'+
+      '<div class="graf-bar-bg"><div class="graf-bar-fill" style="width:'+pct+'%"></div></div>';
+    graf.appendChild(row);
+  });
 }
 
 // Recibo
+let reciboCliId="";
 async function gerarRecibo(clienteId){
+  reciboCliId=clienteId;
   const cli=getCli(clienteId);if(!cli)return;
   const regsC=registros.filter(r=>r.clienteId===clienteId);
   const acrescsC=acrescimos.filter(a=>a.clienteId===clienteId);
-  const pag=await fsGet(`${up()}/meses/${mesVis}/pagamentos/${clienteId}`);
-  const pago=pag?.pago||false;
-  const[ano,mes]=mesVis.split("-"),nomeMes=`${MESES_PT[Number(mes)-1]} ${ano}`;
+  const pag=await fsGet(up()+"/meses/"+mesVis+"/pagamentos/"+clienteId);
+  const pago=pag?pag.pago:false;
+  const parts=mesVis.split("-");
+  const nomeMes=MESES_PT[Number(parts[1])-1]+" "+parts[0];
   const totalH=regsC.reduce((s,r)=>s+r.horas,0);
-  const totalA=regsC.filter(r=>r.tipo==="aula").reduce((s,r)=>s+r.qtdAulas,0);
+  const totalA=regsC.filter(r=>r.tipo==="aula").reduce((s,r)=>s+(r.qtdAulas||0),0);
   const sub=regsC.reduce((s,r)=>s+r.ganho,0);
   const acresc=acrescsC.reduce((s,a)=>s+a.valor,0);
   const p=perfil||{};
-  document.getElementById("recibo-content").innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-size:10px;letter-spacing:2px;color:#10b981;font-weight:800;text-transform:uppercase;margin-bottom:4px">Recibo de Prestação de Serviços</div>
-        <div style="font-size:22px;font-weight:900;color:#111;margin-bottom:4px">${p.nome||"Seu Nome"}</div>
-        ${p.cnpj?`<div style="font-size:12px;color:#666">CNPJ: ${p.cnpj}</div>`:""}
-        ${p.cidade?`<div style="font-size:12px;color:#666">${p.cidade}</div>`:""}
-        ${p.tel?`<div style="font-size:12px;color:#666">${p.tel}</div>`:""}
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:12px;color:#666">Competência</div>
-        <div style="font-size:16px;font-weight:800;color:#111;margin-bottom:6px">${nomeMes}</div>
-        <span class="rec-status ${pago?"pago":"pendente"}">${pago?"✅ Pago":"⏳ Pendente"}</span>
-      </div>
-    </div>
-    <div class="rec-section">
-      <h3>Tomador do Serviço</h3>
-      <div class="rec-row"><span>Nome / Empresa</span><span style="font-weight:700">${cli.nome}</span></div>
-      <div class="rec-row"><span>Tipo</span><span>${cli.tipo==="academia"?"🏢 Academia / Empresa":"👤 Aluno particular"}</span></div>
-    </div>
-    ${regsC.length>0?`
-    <div class="rec-section">
-      <h3>Serviços Prestados</h3>
-      ${[...regsC].sort((a,b)=>a.data.localeCompare(b.data)).map(r=>`
-        <div class="rec-row">
-          <span>${fmtD(r.data)}${isSab(r.data)?" (Sáb)":""} — ${r.tipo==="hora"?`${r.entrada} às ${r.saida} (${fmtH(r.horas)})`:`${r.qtdAulas} aula(s) coletiva(s) — ${fmtH(r.horas)}`}</span>
-          <span style="font-weight:700">${fmtR(r.ganho)}</span>
-        </div>`).join("")}
-      <div class="rec-row" style="font-weight:700;border-top:2px solid #eee;padding-top:8px;margin-top:4px">
-        <span>Subtotal — ${fmtH(totalH)} · ${totalA} aulas</span><span>${fmtR(sub)}</span>
-      </div>
-    </div>`:""}
-    ${acrescsC.length>0?`
-    <div class="rec-section">
-      <h3>Acréscimos</h3>
-      ${acrescsC.map(a=>`<div class="rec-row"><span>${a.desc}</span><span style="font-weight:700">${fmtR(a.valor)}</span></div>`).join("")}
-    </div>`:""}
-    <div class="rec-total"><span>💰 TOTAL A RECEBER</span><span>${fmtR(sub+acresc)}</span></div>
-    <div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center">
-      Emitido em ${new Date().toLocaleDateString("pt-BR")}${p.nome?` por ${p.nome}`:""}${p.cnpj?` · CNPJ ${p.cnpj}`:""}
-    </div>`;
+
+  // Montar texto para WhatsApp
+  let texto="📋 *RECIBO — "+nomeMes+"*\n";
+  texto+="─────────────────\n";
+  texto+="*Prestador:* "+(p.nome||"")+(p.cnpj?" | CNPJ: "+p.cnpj:"")+"\n";
+  texto+="*Cliente:* "+cli.nome+"\n";
+  texto+="─────────────────\n";
+  regsC.sort((a,b)=>a.data.localeCompare(b.data)).forEach(function(r){
+    texto+="📅 "+fmtD(r.data)+(isSab(r.data)?" (Sáb)":"")+"\n";
+    if(r.tipo==="hora")texto+="   "+r.entrada+" → "+r.saida+" ("+fmtH(r.horas)+")\n";
+    else texto+="   "+r.qtdAulas+" aula(s) — "+fmtH(r.horas)+"\n";
+    texto+="   "+fmtR(r.ganho)+"\n";
+    if(r.obs)texto+="   💬 "+r.obs+"\n";
+  });
+  if(acrescsC.length>0){
+    texto+="─────────────────\n";
+    acrescsC.forEach(function(a){texto+="➕ "+a.desc+": "+fmtR(a.valor)+"\n";});
+  }
+  texto+="─────────────────\n";
+  texto+="*💰 TOTAL: "+fmtR(sub+acresc)+"*\n";
+  texto+=(pago?"✅ PAGO":"⏳ PENDENTE");
+  reciboAtualTexto=texto;
+
+  // HTML do recibo
+  let linhasRegs="";
+  regsC.sort((a,b)=>a.data.localeCompare(b.data)).forEach(function(r){
+    linhasRegs+='<div class="rec-row"><span>'+fmtD(r.data)+(isSab(r.data)?" (Sáb)":"")+" — "+(r.tipo==="hora"?r.entrada+" às "+r.saida+" ("+fmtH(r.horas)+")":r.qtdAulas+" aula(s) — "+fmtH(r.horas))+(r.obs?' <em style="color:#999">| '+r.obs+'</em>':"")+'</span><span style="font-weight:700">'+fmtR(r.ganho)+'</span></div>';
+  });
+  let linhasAcresc="";
+  acrescsC.forEach(function(a){linhasAcresc+='<div class="rec-row"><span>'+a.desc+'</span><span style="font-weight:700">'+fmtR(a.valor)+'</span></div>';});
+
+  document.getElementById("recibo-content").innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">'+
+      '<div>'+
+        '<div style="font-size:10px;letter-spacing:2px;color:#10b981;font-weight:800;text-transform:uppercase;margin-bottom:4px">Recibo de Prestação de Serviços</div>'+
+        '<div style="font-size:22px;font-weight:900;color:#111;margin-bottom:4px">'+(p.nome||"Seu Nome")+'</div>'+
+        (p.cnpj?'<div style="font-size:12px;color:#666">CNPJ: '+p.cnpj+'</div>':'')+
+        (p.cidade?'<div style="font-size:12px;color:#666">'+p.cidade+'</div>':'')+
+        (p.tel?'<div style="font-size:12px;color:#666">'+p.tel+'</div>':'')+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<div style="font-size:12px;color:#666">Competência</div>'+
+        '<div style="font-size:16px;font-weight:800;color:#111;margin-bottom:6px">'+nomeMes+'</div>'+
+        '<span class="rec-status '+(pago?"pago":"pendente")+'">'+(pago?"✅ Pago":"⏳ Pendente")+'</span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="rec-section"><h3>Tomador do Serviço</h3>'+
+      '<div class="rec-row"><span>Nome / Empresa</span><span style="font-weight:700">'+cli.nome+'</span></div>'+
+      '<div class="rec-row"><span>Tipo</span><span>'+(cli.tipo==="academia"?"🏢 Academia / Empresa":"👤 Aluno particular")+'</span></div>'+
+    '</div>'+
+    (regsC.length>0?
+      '<div class="rec-section"><h3>Serviços Prestados</h3>'+linhasRegs+
+        '<div class="rec-row" style="font-weight:700;border-top:2px solid #eee;padding-top:8px;margin-top:4px">'+
+          '<span>Subtotal — '+fmtH(totalH)+' · '+totalA+' aulas</span><span>'+fmtR(sub)+'</span>'+
+        '</div></div>':'')+
+    (acrescsC.length>0?'<div class="rec-section"><h3>Acréscimos</h3>'+linhasAcresc+'</div>':'')+
+    '<div class="rec-total"><span>💰 TOTAL A RECEBER</span><span>'+fmtR(sub+acresc)+'</span></div>'+
+    '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center">'+
+      'Emitido em '+new Date().toLocaleDateString("pt-BR")+(p.nome?" por "+p.nome:"")+(p.cnpj?" · CNPJ "+p.cnpj:"")+
+    '</div>';
+
   document.getElementById("recibo-page").style.display="block";
   window.scrollTo(0,0);
 }
+
 document.getElementById("btn-fechar-recibo").onclick=()=>document.getElementById("recibo-page").style.display="none";
 document.getElementById("btn-imprimir").onclick=()=>window.print();
+document.getElementById("btn-whatsapp-recibo").onclick=function(){
+  const txt=encodeURIComponent(reciboAtualTexto);
+  window.open("https://wa.me/?text="+txt,"_blank");
+};
 
 // Config
-document.getElementById("btn-config").onclick=()=>{
+document.getElementById("btn-config").onclick=function(){
   document.getElementById("cfg-nome").value=perfil.nome||"";
   document.getElementById("cfg-cnpj").value=perfil.cnpj||"";
   document.getElementById("cfg-cidade").value=perfil.cidade||"";
@@ -702,27 +963,30 @@ document.getElementById("btn-config").onclick=()=>{
   document.getElementById("modal-config").classList.add("aberto");
 };
 document.getElementById("close-modal-config").onclick=()=>document.getElementById("modal-config").classList.remove("aberto");
-document.getElementById("modal-config").onclick=e=>{if(e.target.id==="modal-config")document.getElementById("modal-config").classList.remove("aberto");};
-document.getElementById("btn-salvar-config").onclick=async()=>{
+document.getElementById("modal-config").onclick=function(e){if(e.target.id==="modal-config")document.getElementById("modal-config").classList.remove("aberto");};
+document.getElementById("btn-salvar-config").onclick=async function(){
   perfil={nome:document.getElementById("cfg-nome").value.trim(),cnpj:document.getElementById("cfg-cnpj").value.trim(),cidade:document.getElementById("cfg-cidade").value.trim(),tel:document.getElementById("cfg-tel").value.trim()};
-  await fsSet(`${up()}/perfil/dados/info`,perfil);
+  await fsSet(up()+"/perfil/dados/info",perfil);
   document.getElementById("modal-config").classList.remove("aberto");
-  showToast("✅ Dados salvos!");
+  showToast("✅ Dados salvos!","ok");
 };
 
 // Tabs
-document.querySelectorAll(".tab-btn").forEach(btn=>{
-  btn.onclick=()=>{
+document.querySelectorAll(".tab-btn").forEach(function(btn){
+  btn.onclick=function(){
     document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("ativo"));
     document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("ativo"));
     btn.classList.add("ativo");
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add("ativo");
+    document.getElementById("tab-"+btn.dataset.tab).classList.add("ativo");
     if(btn.dataset.tab==="clientes")renderClientes();
     if(btn.dataset.tab==="acrescimos")renderAcrescimos();
+    if(btn.dataset.tab==="calendario"){renderCalendario();}
   };
 });
 
-function renderTudo(){renderMeses();renderResumo();renderHistorico();renderAcrescimos();atualizarPontoUI();}
+function renderTudo(){
+  renderMeses();renderResumo();renderHistorico();renderAcrescimos();renderCalendario();atualizarPontoUI();
+}
 </script>
 </body>
 </html>
