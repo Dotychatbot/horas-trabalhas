@@ -482,19 +482,20 @@ function atualizarPontoUI(){
 }
 
 document.getElementById("btn-entrada").onclick=async function(){
+  if(!uid)return showToast("Aguarde o login carregar","erro");
   const clienteId=document.getElementById("ponto-cliente").value;
-  if(!clienteId)return showToast("Selecione um cliente","erro");
+  if(!clienteId)return showToast("Selecione um cliente antes","erro");
   const agora=new Date();
   const hm=agora.toTimeString().slice(0,5);
   const d=agora.toISOString().slice(0,10);
   pontoAberto={entrada:hm,data:d,clienteId:clienteId};
-  await fsSet(up()+"/ponto/dados/aberto",pontoAberto);
   atualizarPontoUI();
   showToast("✅ Entrada: "+hm,"ok");
+  try{await fsSet(up()+"/ponto/dados/aberto",pontoAberto);}catch(e){console.log("erro firebase",e);}
 };
 
 document.getElementById("btn-saida").onclick=async function(){
-  if(!pontoAberto)return;
+  if(!pontoAberto)return showToast("Bata a entrada primeiro","erro");
   const agora=new Date();
   const hm=agora.toTimeString().slice(0,5);
   const horas=calcH(pontoAberto.entrada,hm);
@@ -503,17 +504,21 @@ document.getElementById("btn-saida").onclick=async function(){
   const mes=getMes(pontoAberto.data);
   const id=String(Date.now());
   const reg={tipo:"hora",data:pontoAberto.data,entrada:pontoAberto.entrada,saida:hm,horas:horas,ganho:ganho,clienteId:pontoAberto.clienteId,clienteNome:cli?cli.nome:"",obs:""};
-  await ensureMes(mes);
-  await db.doc(up()+"/meses/"+mes+"/registros/"+id).set(reg);
-  // salvar ultimo
-  await fsSet(up()+"/ponto/dados/ultimo",{clienteId:pontoAberto.clienteId,tipo:"hora"});
-  ultimoReg={clienteId:pontoAberto.clienteId,tipo:"hora"};
-  if(mes===mesVis){registros=[{id:id,...reg},...registros];renderResumo();renderHistorico();renderCalendario();}
+  // Atualiza UI imediatamente
+  const antPonto=pontoAberto;
   pontoAberto=null;
-  await fsDel(up()+"/ponto/dados/aberto");
   atualizarPontoUI();
-  atualizarBtnRepetir();
   showToast("🔴 Saída: "+hm+" · "+fmtH(horas)+" · "+fmtR(ganho),"ok");
+  // Salva no Firebase em background
+  try{
+    await ensureMes(mes);
+    await db.doc(up()+"/meses/"+mes+"/registros/"+id).set(reg);
+    await fsSet(up()+"/ponto/dados/ultimo",{clienteId:antPonto.clienteId,tipo:"hora"});
+    await fsDel(up()+"/ponto/dados/aberto");
+    ultimoReg={clienteId:antPonto.clienteId,tipo:"hora"};
+    if(mes===mesVis){registros=[{id:id,...reg},...registros];renderResumo();renderHistorico();renderCalendario();}
+    atualizarBtnRepetir();
+  }catch(e){console.log("erro firebase saida",e);}
 };
 
 // Repetir último
